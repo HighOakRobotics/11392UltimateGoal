@@ -14,6 +14,10 @@ import java.util.List;
 
 public class Drivetrain extends Subsystem {
 
+	public enum driveState {
+
+	}
+
 	List<DcMotorEx> motors = new ArrayList<>();
 	DcMotorEx frontLeft, frontRight, backLeft, backRight;
 

@@ -26,6 +26,7 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.BASE_CONSTRAINTS;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MOTOR_VELO_PID;
@@ -44,10 +45,20 @@ public class DriveTrainMecanum extends MecanumDrive{
     public static double LATERAL_MULTIPLIER = 1;
 
     public enum Mode {
+        DRIVE_DST,
+        DRIVE_ABS, // TODO implement absolute driving from sensor fusion heading
         IDLE,
         TURN,
         FOLLOW_TRAJECTORY
     }
+
+    private DoubleSupplier drivePower;
+    private DoubleSupplier strafePower;
+    private DoubleSupplier turnPower;
+
+    private DoubleSupplier xPower;
+    private DoubleSupplier yPower;
+    private DoubleSupplier headingPower;
 
     private NanoClock clock;
 
@@ -127,6 +138,18 @@ public class DriveTrainMecanum extends MecanumDrive{
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
     }
 
+    public void setDriveDST() {
+        mode = Mode.DRIVE_DST;
+    }
+
+    public void setDriveDST(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+        drivePower = drive;
+        strafePower = strafe;
+        turnPower = turn;
+        mode = Mode.DRIVE_DST;
+    }
+
+
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, constraints);
     }
@@ -139,7 +162,7 @@ public class DriveTrainMecanum extends MecanumDrive{
         return new TrajectoryBuilder(startPose, startHeading, constraints);
     }
 
-    public void turnAsync(double angle) {
+    public void turn(double angle) {
         double heading = getPoseEstimate().getHeading();
 
         lastPoseOnTurn = getPoseEstimate();
@@ -156,19 +179,9 @@ public class DriveTrainMecanum extends MecanumDrive{
         mode = Mode.TURN;
     }
 
-    public void turn(double angle) {
-        turnAsync(angle);
-        waitForIdle();
-    }
-
-    public void followTrajectoryAsync(Trajectory trajectory) {
+    public void followTrajectory(Trajectory trajectory) {
         follower.followTrajectory(trajectory);
         mode = Mode.FOLLOW_TRAJECTORY;
-    }
-
-    public void followTrajectory(Trajectory trajectory) {
-        followTrajectoryAsync(trajectory);
-        waitForIdle();
     }
 
     public Pose2d getLastError() {
@@ -193,7 +206,7 @@ public class DriveTrainMecanum extends MecanumDrive{
 
         switch (mode) {
             case IDLE:
-                // do nothing
+                setMotorPowers(0,0,0,0);
                 break;
             case TURN: {
                 double t = clock.seconds() - turnStart;
@@ -233,12 +246,6 @@ public class DriveTrainMecanum extends MecanumDrive{
 
                 break;
             }
-        }
-    }
-
-    public void waitForIdle() {
-        while (!Thread.currentThread().isInterrupted() && isBusy()) {
-            update();
         }
     }
 
