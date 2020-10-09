@@ -149,6 +149,9 @@ public class DriveTrainMecanum extends MecanumDrive{
         mode = Mode.DRIVE_DST;
     }
 
+    public void idle() {
+        mode = Mode.IDLE;
+    }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
         return new TrajectoryBuilder(startPose, constraints);
