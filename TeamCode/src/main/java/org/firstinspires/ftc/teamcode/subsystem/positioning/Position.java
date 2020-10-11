@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
 public class Position {
     double xPosition; // inches
