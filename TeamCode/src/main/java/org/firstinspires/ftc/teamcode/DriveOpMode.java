@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.ftc11392.sequoia.SequoiaOpMode;
 
-import org.firstinspires.ftc.teamcode.subsystem.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystem.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 
