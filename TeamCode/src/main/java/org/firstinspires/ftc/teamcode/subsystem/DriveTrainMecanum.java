@@ -149,6 +149,19 @@ public class DriveTrainMecanum extends MecanumDrive{
         mode = Mode.DRIVE_DST;
     }
 
+    private void setMotorsDST() {
+        double d = drivePower.getAsDouble();
+        double s = strafePower.getAsDouble();
+        double t = turnPower.getAsDouble();
+
+        double v  = -d + s - t;
+        double v1 = -d - s - t;
+        double v2 =  d + s - t;
+        double v3 =  d - s - t;
+
+        setMotorPowers(v, v1, v2, v3);
+    }
+
     public void idle() {
         mode = Mode.IDLE;
     }
@@ -194,6 +207,8 @@ public class DriveTrainMecanum extends MecanumDrive{
             case TURN:
                 return new Pose2d(0, 0, turnController.getLastError());
             case IDLE:
+            case DRIVE_DST:
+            case DRIVE_ABS:
                 return new Pose2d();
         }
         throw new AssertionError();
@@ -211,6 +226,11 @@ public class DriveTrainMecanum extends MecanumDrive{
             case IDLE:
                 setMotorPowers(0,0,0,0);
                 break;
+            case DRIVE_DST:
+                setMotorsDST();
+                break;
+            case DRIVE_ABS:
+                throw new UnsupportedOperationException("Please implement."); // TODO implement ABS
             case TURN: {
                 double t = clock.seconds() - turnStart;
 
