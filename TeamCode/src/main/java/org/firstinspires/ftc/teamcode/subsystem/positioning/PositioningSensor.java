@@ -19,7 +19,9 @@ public abstract class PositioningSensor extends Subsystem {
     public abstract Supplier<Position> getPositionSupplier();
 
     @Override
-    public void initialize(HardwareMap hardwareMap) { }
+    public void initialize(HardwareMap hardwareMap) {
+        priority = 0;
+    }
     @Override
     public void start() { }
     @Override

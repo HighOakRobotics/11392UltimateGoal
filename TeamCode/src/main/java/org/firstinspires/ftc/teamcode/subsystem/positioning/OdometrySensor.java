@@ -24,6 +24,7 @@ public class OdometrySensor extends PositioningSensor {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
+        super.initialize(hardwareMap);
         odometry = new StandardTrackingWheelLocalizer(hardwareMap);
         update();
     }

@@ -97,6 +97,8 @@ public class VuforiaSensor extends PositioningSensor {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
+        super.initialize(hardwareMap);
+
         webcamName = hardwareMap.get(WebcamName.class, "Webcam");
         
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();

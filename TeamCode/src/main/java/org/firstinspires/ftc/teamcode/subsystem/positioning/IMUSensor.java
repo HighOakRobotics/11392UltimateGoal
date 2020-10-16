@@ -35,6 +35,7 @@ public class IMUSensor extends PositioningSensor {
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
+        super.initialize(hardwareMap);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
