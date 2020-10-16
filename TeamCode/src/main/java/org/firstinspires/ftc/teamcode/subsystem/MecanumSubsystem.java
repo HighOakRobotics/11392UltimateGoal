@@ -27,12 +27,15 @@ public class MecanumSubsystem extends Subsystem {
     }
 
     @Override
-    public void runPeriodic() {
+    public void initPeriodic() {
         mecanum.update();
     }
 
     @Override
-    public void initPeriodic() {
+    public void start() { }
+
+    @Override
+    public void runPeriodic() {
         mecanum.update();
     }
 

@@ -55,14 +55,19 @@ public class Shooter extends Subsystem {
     }
 
     @Override
+    public void initPeriodic() { }
+
+    @Override
+    public void start() { }
+
+    @Override
     public void runPeriodic() {
         flywheel.setVelocity(flywheelVelocity);
         track.setPosition(trackAngle);
         pivot.setPosition(shooterPitch);
     }
 
-    @Override
-    public void initPeriodic() { }
+
 
     @Override
     public void stop() {
