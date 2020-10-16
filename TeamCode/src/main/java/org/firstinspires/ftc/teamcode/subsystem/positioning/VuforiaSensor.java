@@ -2,9 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Supplier;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -14,6 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.RADIANS;
@@ -29,21 +30,19 @@ public class VuforiaSensor extends PositioningSensor {
 
     // Some other constants
     private static final String VUFORIA_KEY = " --- YOUR NEW VUFORIA KEY GOES HERE  --- "; // TODO Vuforia Key
-    private static final float MM_PER_INCH        = 25.4f;
-    private static final float MM_TARGET_HEIGHT   = (6) * MM_PER_INCH;          // the height of the center of the target image above the floor
+    private static final float MM_PER_INCH = 25.4f;
+    private static final float MM_TARGET_HEIGHT = (6) * MM_PER_INCH;          // the height of the center of the target image above the floor
     private static final float HALF_FIELD = 72 * MM_PER_INCH;
-    private static final float QUAD_FIELD  = 36 * MM_PER_INCH;
-
+    private static final float QUAD_FIELD = 36 * MM_PER_INCH;
+    VuforiaTrackables targetsUltimateGoal;
     private OpenGLMatrix lastLocation;
     private VuforiaLocalizer vuforia;
     private WebcamName webcamName;
     private List<VuforiaTrackable> allTrackables;
-    VuforiaTrackables targetsUltimateGoal;
-
     private boolean targetVisible = false;
-    private float phoneXRotate    = 0;
-    private float phoneYRotate    = 0;
-    private float phoneZRotate    = 0;
+    private float phoneXRotate = 0;
+    private float phoneYRotate = 0;
+    private final float phoneZRotate = 0;
 
     private Position position;
 
@@ -56,13 +55,13 @@ public class VuforiaSensor extends PositioningSensor {
         // check all the trackable targets to see which one (if any) is visible.
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
-            if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
+            if (((VuforiaTrackableDefaultListener) trackable.getListener()).isVisible()) {
                 telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
 
                 // getUpdatedRobotLocation() will return null if no new information is available since
                 // the last time that call was made, or if the trackable is not currently visible.
-                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
+                OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener) trackable.getListener()).getUpdatedRobotLocation();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;
                 }
@@ -87,8 +86,7 @@ public class VuforiaSensor extends PositioningSensor {
             telemetry.addData("Vuforia Rot (rad)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", roll, pitch, heading);
 
             position = new Position(xPos, yPos, heading);
-        }
-        else {
+        } else {
             telemetry.addData("Visible Target", "none");
             position = new Position(null, null, null);
         }
@@ -100,7 +98,7 @@ public class VuforiaSensor extends PositioningSensor {
         super.initialize(hardwareMap);
 
         webcamName = hardwareMap.get(WebcamName.class, "Webcam");
-        
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
         parameters.cameraName = webcamName;
@@ -132,11 +130,11 @@ public class VuforiaSensor extends PositioningSensor {
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 0)));
         frontWallTarget.setLocation(OpenGLMatrix
                 .translation(-HALF_FIELD, 0, MM_TARGET_HEIGHT)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , 90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, 90)));
         // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
         blueTowerGoalTarget.setLocation(OpenGLMatrix
                 .translation(HALF_FIELD, QUAD_FIELD, MM_TARGET_HEIGHT)
-                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0 , -90)));
+                .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
         redTowerGoalTarget.setLocation(OpenGLMatrix
                 .translation(HALF_FIELD, -QUAD_FIELD, MM_TARGET_HEIGHT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, XYZ, DEGREES, 90, 0, -90)));
@@ -149,12 +147,12 @@ public class VuforiaSensor extends PositioningSensor {
         }
         // Rotate the phone vertical about the X axis if it's in portrait mode
         if (PHONE_IS_PORTRAIT) {
-            phoneXRotate = 90 ;
+            phoneXRotate = 90;
         }
         // TODO Change these values
-        final float CAMERA_FORWARD_DISPLACEMENT  = 4.0f * MM_PER_INCH;   // eg: Camera is 4 Inches in front of robot-center
+        final float CAMERA_FORWARD_DISPLACEMENT = 4.0f * MM_PER_INCH;   // eg: Camera is 4 Inches in front of robot-center
         final float CAMERA_VERTICAL_DISPLACEMENT = 8.0f * MM_PER_INCH;   // eg: Camera is 8 Inches above ground
-        final float CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
+        final float CAMERA_LEFT_DISPLACEMENT = 0;     // eg: Camera is ON the robot's center line
         OpenGLMatrix robotFromCamera = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES, phoneYRotate, phoneZRotate, phoneXRotate));

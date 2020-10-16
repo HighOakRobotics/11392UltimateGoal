@@ -28,10 +28,12 @@ public class OdometrySensor extends PositioningSensor {
         odometry = new StandardTrackingWheelLocalizer(hardwareMap);
         update();
     }
+
     @Override
     public void runPeriodic() {
         update();
     }
+
     @Override
     public void initPeriodic() {
         update();

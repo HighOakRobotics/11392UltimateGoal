@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.subsystem.positioning;
 import java.util.concurrent.TimeUnit;
 
 public class Position {
-    private double time;
+    private final double time;
 
-    private boolean hasX;
-    private boolean hasY;
-    private boolean hasHeading;
+    private final boolean hasX;
+    private final boolean hasY;
+    private final boolean hasHeading;
 
-    private double xPosition; // inches
-    private double yPosition; // inches
-    private double heading; // radians
+    private final double xPosition; // inches
+    private final double yPosition; // inches
+    private final double heading; // radians
 
     public Position() {
         this(0.0, 0.0, 0.0);
@@ -29,7 +29,9 @@ public class Position {
         this.heading = heading;
     }
 
-    public double getTime() { return time; }
+    public double getTime() {
+        return time;
+    }
 
     public double getxPosition() {
         return xPosition;

@@ -55,10 +55,12 @@ public class Shooter extends Subsystem {
     }
 
     @Override
-    public void initPeriodic() { }
+    public void initPeriodic() {
+    }
 
     @Override
-    public void start() { }
+    public void start() {
+    }
 
     @Override
     public void runPeriodic() {
@@ -66,7 +68,6 @@ public class Shooter extends Subsystem {
         track.setPosition(trackAngle);
         pivot.setPosition(shooterPitch);
     }
-
 
 
     @Override

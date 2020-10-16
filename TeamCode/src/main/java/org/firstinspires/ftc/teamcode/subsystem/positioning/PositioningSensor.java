@@ -22,12 +22,20 @@ public abstract class PositioningSensor extends Subsystem {
     public void initialize(HardwareMap hardwareMap) {
         priority = 0;
     }
+
     @Override
-    public void start() { }
+    public void start() {
+    }
+
     @Override
-    public void initPeriodic() { }
+    public void initPeriodic() {
+    }
+
     @Override
-    public void runPeriodic() { }
+    public void runPeriodic() {
+    }
+
     @Override
-    public void stop() { }
+    public void stop() {
+    }
 }

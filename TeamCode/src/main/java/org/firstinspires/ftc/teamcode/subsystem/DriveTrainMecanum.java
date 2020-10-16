@@ -38,45 +38,31 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
 
-public class DriveTrainMecanum extends MecanumDrive{
+public class DriveTrainMecanum extends MecanumDrive {
     public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
 
     public static double LATERAL_MULTIPLIER = 1;
-
-    public enum Mode {
-        DRIVE_DST,
-        DRIVE_ABS, // TODO implement absolute driving from sensor fusion heading
-        IDLE,
-        TURN,
-        FOLLOW_TRAJECTORY
-    }
-
     private DoubleSupplier drivePower;
     private DoubleSupplier strafePower;
     private DoubleSupplier turnPower;
-
     private DoubleSupplier xPower;
     private DoubleSupplier yPower;
     private DoubleSupplier headingPower;
-
-    private NanoClock clock;
-
+    private final NanoClock clock;
     private Mode mode;
-
-    private PIDFController turnController;
+    private final PIDFController turnController;
     private MotionProfile turnProfile;
     private double turnStart;
-
-    private DriveConstraints constraints;
-    private TrajectoryFollower follower;
-
-    private List<Pose2d> poseHistory;
-
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
-    private BNO055IMU imu;
-
+    private final DriveConstraints constraints;
+    private final TrajectoryFollower follower;
+    private final List<Pose2d> poseHistory;
+    private final DcMotorEx leftFront;
+    private final DcMotorEx leftRear;
+    private final DcMotorEx rightRear;
+    private final DcMotorEx rightFront;
+    private final List<DcMotorEx> motors;
+    private final BNO055IMU imu;
     private Pose2d lastPoseOnTurn;
 
     public DriveTrainMecanum(HardwareMap hardwareMap) {
@@ -154,10 +140,10 @@ public class DriveTrainMecanum extends MecanumDrive{
         double s = strafePower.getAsDouble();
         double t = turnPower.getAsDouble();
 
-        double v  = -d + s - t;
+        double v = -d + s - t;
         double v1 = -d - s - t;
-        double v2 =  d + s - t;
-        double v3 =  d - s - t;
+        double v2 = d + s - t;
+        double v3 = d - s - t;
 
         setMotorPowers(v, v1, v2, v3);
     }
@@ -224,7 +210,7 @@ public class DriveTrainMecanum extends MecanumDrive{
 
         switch (mode) {
             case IDLE:
-                setMotorPowers(0,0,0,0);
+                setMotorPowers(0, 0, 0, 0);
                 break;
             case DRIVE_DST:
                 setMotorsDST();
@@ -329,5 +315,13 @@ public class DriveTrainMecanum extends MecanumDrive{
     @Override
     public double getRawExternalHeading() {
         return imu.getAngularOrientation().firstAngle;
+    }
+
+    public enum Mode {
+        DRIVE_DST,
+        DRIVE_ABS, // TODO implement absolute driving from sensor fusion heading
+        IDLE,
+        TURN,
+        FOLLOW_TRAJECTORY
     }
 }

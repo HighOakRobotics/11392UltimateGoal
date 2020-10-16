@@ -25,7 +25,7 @@ public class IMUSensor extends PositioningSensor {
 
         // TODO Ensure that imu is operating correctly by checking status and calibration
 
-        position = new Position(null,null, (double) angles.firstAngle);
+        position = new Position(null, null, (double) angles.firstAngle);
     }
 
     @Override
@@ -37,11 +37,11 @@ public class IMUSensor extends PositioningSensor {
     public void initialize(HardwareMap hardwareMap) {
         super.initialize(hardwareMap);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit           = BNO055IMU.AngleUnit.RADIANS;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
+        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
-        parameters.loggingEnabled      = true;
-        parameters.loggingTag          = "IMU";
+        parameters.loggingEnabled = true;
+        parameters.loggingTag = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
         imu = hardwareMap.get(BNO055IMU.class, "imu");
