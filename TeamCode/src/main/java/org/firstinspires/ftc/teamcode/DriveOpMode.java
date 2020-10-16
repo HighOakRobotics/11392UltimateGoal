@@ -3,10 +3,12 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc11392.sequoia.SequoiaOpMode;
 
 import org.firstinspires.ftc.teamcode.subsystem.MecanumSubsystem;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.OdometrySensor;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 
 public class DriveOpMode extends SequoiaOpMode {
-	MecanumSubsystem drivetrain = new MecanumSubsystem();
+	OdometrySensor odometry = new OdometrySensor();
+	MecanumSubsystem drivetrain = new MecanumSubsystem(odometry.getPositionSupplier());
 
 	@Override
 	public void initTriggers() {
