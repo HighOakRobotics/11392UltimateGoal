@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
+import java.util.concurrent.TimeUnit;
+
 public class Position {
+    private double time;
+
     private boolean hasX;
     private boolean hasY;
     private boolean hasHeading;
@@ -14,6 +18,7 @@ public class Position {
     }
 
     public Position(Double x, Double y, Double heading) {
+        time = TimeUnit.SECONDS.convert(System.nanoTime(), TimeUnit.NANOSECONDS);
 
         hasX = x != null;
         hasY = y != null;
@@ -23,6 +28,8 @@ public class Position {
         yPosition = y;
         this.heading = heading;
     }
+
+    public double getTime() { return time; }
 
     public double getxPosition() {
         return xPosition;

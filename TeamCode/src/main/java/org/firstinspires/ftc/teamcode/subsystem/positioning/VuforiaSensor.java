@@ -90,7 +90,7 @@ public class VuforiaSensor extends PositioningSensor {
         }
         else {
             telemetry.addData("Visible Target", "none");
-            position = new Position(null, null, null)
+            position = new Position(null, null, null);
         }
         telemetry.update();
     }

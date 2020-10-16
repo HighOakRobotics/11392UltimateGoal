@@ -10,18 +10,29 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.encoderTicksToInches;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.getMotorVelocityF;
 
 public class MecanumSubsystem extends Subsystem {
     DriveTrainMecanum mecanum;
+    Supplier<Position> positionSupplier;
+
+    public MecanumSubsystem(Supplier<Position> positionSupplier) {
+        this.positionSupplier = positionSupplier;
+    }
+
     @Override
     public void initialize(HardwareMap hardwareMap) {
         mecanum = new DriveTrainMecanum(hardwareMap);
+        mecanum.setLocalizer(new PositionLocalizer(positionSupplier));
         mecanum.setMotorPowers(0,0,0,0);
         mecanum.update();
     }

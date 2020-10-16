@@ -41,5 +41,5 @@ public class PositionLocalizer implements Localizer {
     }
 
     @Override
-    public void update() { /*Do not update as this just converts garbage*/ }
+    public void update() { /*Do not update as this class just converts garbage*/ }
 }
