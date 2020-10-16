@@ -8,70 +8,70 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Shooter extends Subsystem {
 
-    private final double INIT_TRACK_ANGLE = 0.0;
-    private final double INIT_SHOOTER_PITCH = 0.0;
-    private DcMotorEx flywheel;
-    private Servo loader;
-    private Servo track;
-    private Servo pivot;
-    private double flywheelVelocity;
-    private double trackAngle;
-    private double shooterPitch;
+	private final double INIT_TRACK_ANGLE = 0.0;
+	private final double INIT_SHOOTER_PITCH = 0.0;
+	private DcMotorEx flywheel;
+	private Servo loader;
+	private Servo track;
+	private Servo pivot;
+	private double flywheelVelocity;
+	private double trackAngle;
+	private double shooterPitch;
 
-    public double getFlywheelVelocity() {
-        return flywheelVelocity;
-    }
+	public double getFlywheelVelocity() {
+		return flywheelVelocity;
+	}
 
-    public void setFlywheelVelocity(double flywheelVelocity) {
-        this.flywheelVelocity = flywheelVelocity;
-    }
+	public void setFlywheelVelocity(double flywheelVelocity) {
+		this.flywheelVelocity = flywheelVelocity;
+	}
 
-    public double getTrackAngle() {
-        return trackAngle;
-    }
+	public double getTrackAngle() {
+		return trackAngle;
+	}
 
-    public void setTrackAngle(double trackAngle) {
-        this.trackAngle = trackAngle;
-    }
+	public void setTrackAngle(double trackAngle) {
+		this.trackAngle = trackAngle;
+	}
 
-    public double getShooterPitch() {
-        return shooterPitch;
-    }
+	public double getShooterPitch() {
+		return shooterPitch;
+	}
 
-    public void setShooterPitch(double shooterPitch) {
-        this.shooterPitch = shooterPitch;
-    }
+	public void setShooterPitch(double shooterPitch) {
+		this.shooterPitch = shooterPitch;
+	}
 
-    @Override
-    public void initialize(HardwareMap hardwareMap) {
+	@Override
+	public void initialize(HardwareMap hardwareMap) {
 
-        // TODO Grab hardware devices
-        track.setPosition(INIT_TRACK_ANGLE);
-        pivot.setPosition(INIT_SHOOTER_PITCH);
+		// TODO Grab hardware devices
+		track.setPosition(INIT_TRACK_ANGLE);
+		pivot.setPosition(INIT_SHOOTER_PITCH);
 
-        flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //flywheel.setMotorType();
-        flywheel.setVelocity(0); // In encoder mode it runs at a fraction of maximum velocity.
-    }
+		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		//flywheel.setMotorType();
+		flywheel.setVelocity(0); // In encoder mode it runs at a fraction of maximum velocity.
+	}
 
-    @Override
-    public void initPeriodic() {
-    }
+	@Override
+	public void initPeriodic() {
+	}
 
-    @Override
-    public void start() {
-    }
+	@Override
+	public void start() {
+	}
 
-    @Override
-    public void runPeriodic() {
-        flywheel.setVelocity(flywheelVelocity);
-        track.setPosition(trackAngle);
-        pivot.setPosition(shooterPitch);
-    }
+	@Override
+	public void runPeriodic() {
+		flywheel.setVelocity(flywheelVelocity);
+		track.setPosition(trackAngle);
+		pivot.setPosition(shooterPitch);
+	}
 
 
-    @Override
-    public void stop() {
-        flywheel.setVelocity(0);
-    }
+	@Override
+	public void stop() {
+		flywheel.setVelocity(0);
+	}
 }

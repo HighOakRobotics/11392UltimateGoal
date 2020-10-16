@@ -6,15 +6,15 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystem.MecanumSubsystem;
 
 public class GamepadDriveTask extends StartEndTask {
-    public GamepadDriveTask(MecanumSubsystem drivetrain, Gamepad gamepad) {
-        super(() -> {
-            drivetrain.mecanum().setDriveDST(
-                    () -> gamepad.left_stick_y,
-                    () -> gamepad.left_stick_x,
-                    () -> gamepad.right_stick_x
-            );
-        }, () -> {
-            drivetrain.mecanum().idle();
-        }, drivetrain);
-    }
+	public GamepadDriveTask(MecanumSubsystem drivetrain, Gamepad gamepad) {
+		super(() -> {
+			drivetrain.mecanum().setDriveDST(
+					() -> gamepad.left_stick_y,
+					() -> gamepad.left_stick_x,
+					() -> gamepad.right_stick_x
+			);
+		}, () -> {
+			drivetrain.mecanum().idle();
+		}, drivetrain);
+	}
 }

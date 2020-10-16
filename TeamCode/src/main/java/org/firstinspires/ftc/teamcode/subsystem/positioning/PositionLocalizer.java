@@ -14,32 +14,32 @@ import java.util.function.Supplier;
  * instead of just odometry data.
  */
 public class PositionLocalizer implements Localizer {
-    Supplier<Position> fusionSupplier;
-    Pose2d pose;
+	Supplier<Position> fusionSupplier;
+	Pose2d pose;
 
-    public PositionLocalizer(Supplier<Position> fusionSupplier) {
-        this.fusionSupplier = fusionSupplier;
-    }
+	public PositionLocalizer(Supplier<Position> fusionSupplier) {
+		this.fusionSupplier = fusionSupplier;
+	}
 
-    @NotNull
-    @Override
-    public Pose2d getPoseEstimate() {
-        Position position = fusionSupplier.get();
-        return new Pose2d(new Vector2d(position.getxPosition(), position.getyPosition()), position.getHeading());
-    }
+	@NotNull
+	@Override
+	public Pose2d getPoseEstimate() {
+		Position position = fusionSupplier.get();
+		return new Pose2d(new Vector2d(position.getxPosition(), position.getyPosition()), position.getHeading());
+	}
 
-    @Override
-    public void setPoseEstimate(@NotNull Pose2d pose2d) {
-        // TODO check if this actually makes sense for road runner
-        throw new UnsupportedOperationException("FusionLocalizer should not have its pose set.");
-    }
+	@Override
+	public void setPoseEstimate(@NotNull Pose2d pose2d) {
+		// TODO check if this actually makes sense for road runner
+		throw new UnsupportedOperationException("FusionLocalizer should not have its pose set.");
+	}
 
-    @Nullable
-    @Override
-    public Pose2d getPoseVelocity() {
-        return null;
-    }
+	@Nullable
+	@Override
+	public Pose2d getPoseVelocity() {
+		return null;
+	}
 
-    @Override
-    public void update() { /*Do not update as this class just converts garbage*/ }
+	@Override
+	public void update() { /*Do not update as this class just converts garbage*/ }
 }
