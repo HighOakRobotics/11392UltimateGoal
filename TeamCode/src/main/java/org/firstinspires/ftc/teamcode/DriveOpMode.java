@@ -6,13 +6,15 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.MecanumSubsystem;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter2W;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.OdometrySensor;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.Shooter2WControlTask;
 
 @TeleOp
 public class DriveOpMode extends SequoiaOpMode {
-	//MecanumSubsystem drivetrain = new MecanumSubsystem();
 	Shooter2W shooter = new Shooter2W();
+	//OdometrySensor odometry = new OdometrySensor();
+	//MecanumSubsystem drivetrain = new MecanumSubsystem(odometry.getPositionSupplier());
 
 	@Override
 	public void initTriggers() { }
