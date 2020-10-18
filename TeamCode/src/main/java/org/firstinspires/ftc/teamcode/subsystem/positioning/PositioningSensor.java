@@ -3,31 +3,39 @@ package org.firstinspires.ftc.teamcode.subsystem.positioning;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Position;
-
 import java.util.function.Supplier;
 
-public class PositioningSensor extends Subsystem {
-    Position position;
+public abstract class PositioningSensor extends Subsystem {
+	Position position;
 
-    public PositioningSensor() {
-        this(new Position());
-    }
+	public PositioningSensor() {
+		this(new Position());
+	}
 
-    public PositioningSensor(Position initialPosition) {
-        position = initialPosition;
-    }
+	public PositioningSensor(Position initialPosition) {
+		position = initialPosition;
+	}
 
-    public Supplier<Position> getPositionSupplier() {
-        return () -> position;
-    }
+	public abstract Supplier<Position> getPositionSupplier();
 
-    @Override
-    public void initialize(HardwareMap hardwareMap) { }
-    @Override
-    public void runPeriodic() { }
-    @Override
-    public void initPeriodic() { }
-    @Override
-    public void stop() { }
+	@Override
+	public void initialize(HardwareMap hardwareMap) {
+		priority = 0;
+	}
+
+	@Override
+	public void start() {
+	}
+
+	@Override
+	public void initPeriodic() {
+	}
+
+	@Override
+	public void runPeriodic() {
+	}
+
+	@Override
+	public void stop() {
+	}
 }

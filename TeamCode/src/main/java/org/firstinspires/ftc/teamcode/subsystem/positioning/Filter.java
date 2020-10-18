@@ -1,4 +1,4 @@
 package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
-public class VuforiaSource {
+public class Filter {
 }

@@ -38,296 +38,290 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
 
-public class DriveTrainMecanum extends MecanumDrive{
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-    public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
-
-    public static double LATERAL_MULTIPLIER = 1;
-
-    public enum Mode {
-        DRIVE_DST,
-        DRIVE_ABS, // TODO implement absolute driving from sensor fusion heading
-        IDLE,
-        TURN,
-        FOLLOW_TRAJECTORY
-    }
-
-    private DoubleSupplier drivePower;
-    private DoubleSupplier strafePower;
-    private DoubleSupplier turnPower;
-
-    private DoubleSupplier xPower;
-    private DoubleSupplier yPower;
-    private DoubleSupplier headingPower;
-
-    private NanoClock clock;
-
-    private Mode mode;
-
-    private PIDFController turnController;
-    private MotionProfile turnProfile;
-    private double turnStart;
-
-    private DriveConstraints constraints;
-    private TrajectoryFollower follower;
-
-    private List<Pose2d> poseHistory;
-
-    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
-    private List<DcMotorEx> motors;
-    private BNO055IMU imu;
-
-    private Pose2d lastPoseOnTurn;
-
-    public DriveTrainMecanum(HardwareMap hardwareMap) {
-        super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
-
-        clock = NanoClock.system();
-
-        mode = Mode.IDLE;
-
-        turnController = new PIDFController(HEADING_PID);
-        turnController.setInputBounds(0, 2 * Math.PI);
-
-        constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
-        follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
-                new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
-
-        poseHistory = new ArrayList<>();
-
-        for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
-            module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
-        }
-
-        // TODO: adjust the names of the following hardware devices to match your configuration
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
-        imu.initialize(parameters);
-
-        // TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
-        // upward (normal to the floor) using a command like the following:
-        // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
-
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-
-        motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
-
-        for (DcMotorEx motor : motors) {
-            MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motor.setMotorType(motorConfigurationType);
-        }
-
-        if (RUN_USING_ENCODER) {
-            setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
-            setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
-        }
-
-        // TODO: reverse any motors using DcMotor.setDirection()
-
-        // TODO: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-    }
-
-    public void setDriveDST() {
-        mode = Mode.DRIVE_DST;
-    }
-
-    public void setDriveDST(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
-        drivePower = drive;
-        strafePower = strafe;
-        turnPower = turn;
-        mode = Mode.DRIVE_DST;
-    }
-
-    private void setMotorsDST() {
-        double d = drivePower.getAsDouble();
-        double s = strafePower.getAsDouble();
-        double t = turnPower.getAsDouble();
-
-        double v  = -d + s - t;
-        double v1 = -d - s - t;
-        double v2 =  d + s - t;
-        double v3 =  d - s - t;
-
-        setMotorPowers(v, v1, v2, v3);
-    }
-
-    public void idle() {
-        mode = Mode.IDLE;
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
-        return new TrajectoryBuilder(startPose, constraints);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
-        return new TrajectoryBuilder(startPose, reversed, constraints);
-    }
-
-    public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
-        return new TrajectoryBuilder(startPose, startHeading, constraints);
-    }
-
-    public void turn(double angle) {
-        double heading = getPoseEstimate().getHeading();
-
-        lastPoseOnTurn = getPoseEstimate();
-
-        turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
-                new MotionState(heading, 0, 0, 0),
-                new MotionState(heading + angle, 0, 0, 0),
-                constraints.maxAngVel,
-                constraints.maxAngAccel,
-                constraints.maxAngJerk
-        );
-
-        turnStart = clock.seconds();
-        mode = Mode.TURN;
-    }
-
-    public void followTrajectory(Trajectory trajectory) {
-        follower.followTrajectory(trajectory);
-        mode = Mode.FOLLOW_TRAJECTORY;
-    }
-
-    public Pose2d getLastError() {
-        switch (mode) {
-            case FOLLOW_TRAJECTORY:
-                return follower.getLastError();
-            case TURN:
-                return new Pose2d(0, 0, turnController.getLastError());
-            case IDLE:
-            case DRIVE_DST:
-            case DRIVE_ABS:
-                return new Pose2d();
-        }
-        throw new AssertionError();
-    }
-
-    public void update() {
-        updatePoseEstimate();
-
-        Pose2d currentPose = getPoseEstimate();
-        Pose2d lastError = getLastError();
-
-        poseHistory.add(currentPose);
-
-        switch (mode) {
-            case IDLE:
-                setMotorPowers(0,0,0,0);
-                break;
-            case DRIVE_DST:
-                setMotorsDST();
-                break;
-            case DRIVE_ABS:
-                throw new UnsupportedOperationException("Please implement."); // TODO implement ABS
-            case TURN: {
-                double t = clock.seconds() - turnStart;
-
-                MotionState targetState = turnProfile.get(t);
-
-                turnController.setTargetPosition(targetState.getX());
-
-                double correction = turnController.update(currentPose.getHeading());
-
-                double targetOmega = targetState.getV();
-                double targetAlpha = targetState.getA();
-                setDriveSignal(new DriveSignal(new Pose2d(
-                        0, 0, targetOmega + correction
-                ), new Pose2d(
-                        0, 0, targetAlpha
-                )));
-
-                Pose2d newPose = lastPoseOnTurn.copy(lastPoseOnTurn.getX(), lastPoseOnTurn.getY(), targetState.getX());
-
-                if (t >= turnProfile.duration()) {
-                    mode = Mode.IDLE;
-                    setDriveSignal(new DriveSignal());
-                }
-
-                break;
-            }
-            case FOLLOW_TRAJECTORY: {
-                setDriveSignal(follower.update(currentPose));
-
-                Trajectory trajectory = follower.getTrajectory();
-
-                if (!follower.isFollowing()) {
-                    mode = Mode.IDLE;
-                    setDriveSignal(new DriveSignal());
-                }
-
-                break;
-            }
-        }
-    }
-
-    public boolean isBusy() {
-        return mode != Mode.IDLE;
-    }
-
-    public void setMode(DcMotor.RunMode runMode) {
-        for (DcMotorEx motor : motors) {
-            motor.setMode(runMode);
-        }
-    }
-
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
-        for (DcMotorEx motor : motors) {
-            motor.setZeroPowerBehavior(zeroPowerBehavior);
-        }
-    }
-
-    public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
-        PIDFCoefficients coefficients = leftFront.getPIDFCoefficients(runMode);
-        return new PIDCoefficients(coefficients.p, coefficients.i, coefficients.d);
-    }
-
-    public void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients) {
-        for (DcMotorEx motor : motors) {
-            motor.setPIDFCoefficients(runMode, new PIDFCoefficients(
-                    coefficients.kP, coefficients.kI, coefficients.kD, getMotorVelocityF()
-            ));
-        }
-    }
-
-    @Override
-    public List<Double> getWheelPositions() {
-        List<Double> wheelPositions = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
-            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
-        }
-        return wheelPositions;
-    }
-
-    public List<Double> getWheelVelocities() {
-        List<Double> wheelVelocities = new ArrayList<>();
-        for (DcMotorEx motor : motors) {
-            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
-        }
-        return wheelVelocities;
-    }
-
-    @Override
-    public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
-        rightFront.setPower(v3);
-    }
-
-    @Override
-    public double getRawExternalHeading() {
-        return imu.getAngularOrientation().firstAngle;
-    }
+public class DriveTrainMecanum extends MecanumDrive {
+	public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
+	public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+
+	public static double LATERAL_MULTIPLIER = 1;
+	private final NanoClock clock;
+	private final PIDFController turnController;
+	private final DriveConstraints constraints;
+	private final TrajectoryFollower follower;
+	private final List<Pose2d> poseHistory;
+	private final DcMotorEx leftFront;
+	private final DcMotorEx leftRear;
+	private final DcMotorEx rightRear;
+	private final DcMotorEx rightFront;
+	private final List<DcMotorEx> motors;
+	private final BNO055IMU imu;
+	private DoubleSupplier drivePower;
+	private DoubleSupplier strafePower;
+	private DoubleSupplier turnPower;
+	private DoubleSupplier xPower;
+	private DoubleSupplier yPower;
+	private DoubleSupplier headingPower;
+	private Mode mode;
+	private MotionProfile turnProfile;
+	private double turnStart;
+	private Pose2d lastPoseOnTurn;
+
+	public DriveTrainMecanum(HardwareMap hardwareMap) {
+		super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
+
+		clock = NanoClock.system();
+
+		mode = Mode.IDLE;
+
+		turnController = new PIDFController(HEADING_PID);
+		turnController.setInputBounds(0, 2 * Math.PI);
+
+		constraints = new MecanumConstraints(BASE_CONSTRAINTS, TRACK_WIDTH);
+		follower = new HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+				new Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5);
+
+		poseHistory = new ArrayList<>();
+
+		for (LynxModule module : hardwareMap.getAll(LynxModule.class)) {
+			module.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+		}
+
+		// TODO: adjust the names of the following hardware devices to match your configuration
+		imu = hardwareMap.get(BNO055IMU.class, "imu");
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+		imu.initialize(parameters);
+
+		// TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+		// upward (normal to the floor) using a command like the following:
+		// BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+
+		leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+		leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+		rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+		rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+		motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
+
+		for (DcMotorEx motor : motors) {
+			MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();
+			motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+			motor.setMotorType(motorConfigurationType);
+		}
+
+		if (RUN_USING_ENCODER) {
+			setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		}
+
+		setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+		if (RUN_USING_ENCODER && MOTOR_VELO_PID != null) {
+			setPIDCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID);
+		}
+
+		// TODO: reverse any motors using DcMotor.setDirection()
+
+		// TODO: if desired, use setLocalizer() to change the localization method
+		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+	}
+
+	public void setDriveDST() {
+		mode = Mode.DRIVE_DST;
+	}
+
+	public void setDriveDST(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+		drivePower = drive;
+		strafePower = strafe;
+		turnPower = turn;
+		mode = Mode.DRIVE_DST;
+	}
+
+	private void setMotorsDST() {
+		double d = drivePower.getAsDouble();
+		double s = strafePower.getAsDouble();
+		double t = turnPower.getAsDouble();
+
+		double v = -d + s - t;
+		double v1 = -d - s - t;
+		double v2 = d + s - t;
+		double v3 = d - s - t;
+
+		setMotorPowers(v, v1, v2, v3);
+	}
+
+	public void idle() {
+		mode = Mode.IDLE;
+	}
+
+	public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
+		return new TrajectoryBuilder(startPose, constraints);
+	}
+
+	public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, boolean reversed) {
+		return new TrajectoryBuilder(startPose, reversed, constraints);
+	}
+
+	public TrajectoryBuilder trajectoryBuilder(Pose2d startPose, double startHeading) {
+		return new TrajectoryBuilder(startPose, startHeading, constraints);
+	}
+
+	public void turn(double angle) {
+		double heading = getPoseEstimate().getHeading();
+
+		lastPoseOnTurn = getPoseEstimate();
+
+		turnProfile = MotionProfileGenerator.generateSimpleMotionProfile(
+				new MotionState(heading, 0, 0, 0),
+				new MotionState(heading + angle, 0, 0, 0),
+				constraints.maxAngVel,
+				constraints.maxAngAccel,
+				constraints.maxAngJerk
+		);
+
+		turnStart = clock.seconds();
+		mode = Mode.TURN;
+	}
+
+	public void followTrajectory(Trajectory trajectory) {
+		follower.followTrajectory(trajectory);
+		mode = Mode.FOLLOW_TRAJECTORY;
+	}
+
+	public Pose2d getLastError() {
+		switch (mode) {
+			case FOLLOW_TRAJECTORY:
+				return follower.getLastError();
+			case TURN:
+				return new Pose2d(0, 0, turnController.getLastError());
+			case IDLE:
+			case DRIVE_DST:
+			case DRIVE_ABS:
+				return new Pose2d();
+		}
+		throw new AssertionError();
+	}
+
+	public void update() {
+		updatePoseEstimate();
+
+		Pose2d currentPose = getPoseEstimate();
+		Pose2d lastError = getLastError();
+
+		poseHistory.add(currentPose);
+
+		switch (mode) {
+			case IDLE:
+				setMotorPowers(0, 0, 0, 0);
+				break;
+			case DRIVE_DST:
+				setMotorsDST();
+				break;
+			case DRIVE_ABS:
+				throw new UnsupportedOperationException("Please implement."); // TODO implement ABS
+			case TURN: {
+				double t = clock.seconds() - turnStart;
+
+				MotionState targetState = turnProfile.get(t);
+
+				turnController.setTargetPosition(targetState.getX());
+
+				double correction = turnController.update(currentPose.getHeading());
+
+				double targetOmega = targetState.getV();
+				double targetAlpha = targetState.getA();
+				setDriveSignal(new DriveSignal(new Pose2d(
+						0, 0, targetOmega + correction
+				), new Pose2d(
+						0, 0, targetAlpha
+				)));
+
+				Pose2d newPose = lastPoseOnTurn.copy(lastPoseOnTurn.getX(), lastPoseOnTurn.getY(), targetState.getX());
+
+				if (t >= turnProfile.duration()) {
+					mode = Mode.IDLE;
+					setDriveSignal(new DriveSignal());
+				}
+
+				break;
+			}
+			case FOLLOW_TRAJECTORY: {
+				setDriveSignal(follower.update(currentPose));
+
+				Trajectory trajectory = follower.getTrajectory();
+
+				if (!follower.isFollowing()) {
+					mode = Mode.IDLE;
+					setDriveSignal(new DriveSignal());
+				}
+
+				break;
+			}
+		}
+	}
+
+	public boolean isBusy() {
+		return mode != Mode.IDLE;
+	}
+
+	public void setMode(DcMotor.RunMode runMode) {
+		for (DcMotorEx motor : motors) {
+			motor.setMode(runMode);
+		}
+	}
+
+	public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior zeroPowerBehavior) {
+		for (DcMotorEx motor : motors) {
+			motor.setZeroPowerBehavior(zeroPowerBehavior);
+		}
+	}
+
+	public PIDCoefficients getPIDCoefficients(DcMotor.RunMode runMode) {
+		PIDFCoefficients coefficients = leftFront.getPIDFCoefficients(runMode);
+		return new PIDCoefficients(coefficients.p, coefficients.i, coefficients.d);
+	}
+
+	public void setPIDCoefficients(DcMotor.RunMode runMode, PIDCoefficients coefficients) {
+		for (DcMotorEx motor : motors) {
+			motor.setPIDFCoefficients(runMode, new PIDFCoefficients(
+					coefficients.kP, coefficients.kI, coefficients.kD, getMotorVelocityF()
+			));
+		}
+	}
+
+	@Override
+	public List<Double> getWheelPositions() {
+		List<Double> wheelPositions = new ArrayList<>();
+		for (DcMotorEx motor : motors) {
+			wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
+		}
+		return wheelPositions;
+	}
+
+	public List<Double> getWheelVelocities() {
+		List<Double> wheelVelocities = new ArrayList<>();
+		for (DcMotorEx motor : motors) {
+			wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
+		}
+		return wheelVelocities;
+	}
+
+	@Override
+	public void setMotorPowers(double v, double v1, double v2, double v3) {
+		leftFront.setPower(v);
+		leftRear.setPower(v1);
+		rightRear.setPower(v2);
+		rightFront.setPower(v3);
+	}
+
+	@Override
+	public double getRawExternalHeading() {
+		return imu.getAngularOrientation().firstAngle;
+	}
+
+	public enum Mode {
+		DRIVE_DST,
+		DRIVE_ABS, // TODO implement absolute driving from sensor fusion heading
+		IDLE,
+		TURN,
+		FOLLOW_TRAJECTORY
+	}
 }
