@@ -69,6 +69,11 @@ public class Shooter2W extends Subsystem {
     }
 
     @Override
+    public void start() {
+
+    }
+
+    @Override
     public void runPeriodic() {
         frontFlywheel.setPower(frontFlywheelVelocity);
         backFlywheel.setPower(backFlywheelVelocity);
