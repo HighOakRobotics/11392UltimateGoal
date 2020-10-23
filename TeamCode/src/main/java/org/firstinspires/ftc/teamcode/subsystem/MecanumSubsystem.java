@@ -18,6 +18,7 @@ public class MecanumSubsystem extends Subsystem {
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
+		priority = 20;
 		mecanum = new DriveTrainMecanum(hardwareMap);
 		mecanum.setLocalizer(new PositionLocalizer(positionSupplier));
 		mecanum.setMotorPowers(0, 0, 0, 0);
