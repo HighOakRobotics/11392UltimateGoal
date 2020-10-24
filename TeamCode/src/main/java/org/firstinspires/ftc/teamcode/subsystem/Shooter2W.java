@@ -77,6 +77,9 @@ public class Shooter2W extends Subsystem {
     public void runPeriodic() {
         frontFlywheel.setPower(frontFlywheelVelocity);
         backFlywheel.setPower(backFlywheelVelocity);
+        telemetry.addLine()
+                .addData("front", frontFlywheelVelocity)
+                .addData("back", backFlywheelVelocity);
         //track.setPosition(trackAngle);
         //pivot.setPosition(shooterPitch);
     }

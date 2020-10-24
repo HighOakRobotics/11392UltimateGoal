@@ -9,12 +9,14 @@ public class Shooter2WControlTask extends Task {
     Shooter2W shooter;
 
     public Shooter2WControlTask(Shooter2W shooter) {
+        this.running = true;
         this.shooter = shooter;
-        //addSubsystems(shooter);
+        addSubsystems(shooter);
     }
 
     @Override
     public void init() {
+        telemetry.log().add("started shooter");
         shooter.setFrontFlywheelVelocity(1.0);
         shooter.setBackFlywheelVelocity(1.0);
     }
@@ -24,6 +26,11 @@ public class Shooter2WControlTask extends Task {
 
     @Override
     public void stop(boolean interrupted) {
+        if (interrupted) {
+            telemetry.log().add("interrupted shooter");
+        } else {
+            telemetry.log().add("stopped shooter");
+        }
         shooter.setFrontFlywheelVelocity(0.0);
         shooter.setBackFlywheelVelocity(0.0);
     }

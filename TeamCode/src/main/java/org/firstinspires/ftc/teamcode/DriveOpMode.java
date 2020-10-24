@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
+import com.ftc11392.sequoia.task.ParallelTaskBundle;
+import com.ftc11392.sequoia.task.RunTask;
+import com.ftc11392.sequoia.task.Task;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.MecanumSubsystem;
@@ -21,7 +24,13 @@ public class DriveOpMode extends SequoiaOpMode {
 
 	@Override
 	public void runTriggers() {
-		gamepad1H.downButton().onPressWithCancel(new Shooter2WControlTask(shooter));
+		gamepad1H.aToggleButton().risingWithCancel(//new ParallelTaskBundle(
+				new Shooter2WControlTask(shooter)//,
+				//new RunTask(() -> {
+				//	telemetry.addData("shooter", "running");
+				//}, null)
+				//)
+		);
 		//gamepad1H.sticksButton(0.05).onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 	}
 }
