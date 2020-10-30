@@ -54,18 +54,18 @@ public class Shooter2W extends Subsystem {
     @Override
     public void initialize(HardwareMap hardwareMap) {
 
-        frontFlywheel = hardwareMap.get(DcMotorEx.class, "frontFlywheel");
-        backFlywheel = hardwareMap.get(DcMotorEx.class, "backFlywheel");
+        //frontFlywheel = hardwareMap.get(DcMotorEx.class, "frontFlywheel");
+        //backFlywheel = hardwareMap.get(DcMotorEx.class, "backFlywheel");
 
         // TODO Grab hardware devices
         //track.setPosition(INIT_TRACK_ANGLE);
         //pivot.setPosition(INIT_SHOOTER_PITCH);
 
-        frontFlywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        backFlywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //frontFlywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //backFlywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         //flywheel.setMotorType();
-        frontFlywheel.setPower(0); // In encoder mode it runs at a fraction of maximum velocity.
-        backFlywheel.setPower(0);
+        //frontFlywheel.setPower(0); // In encoder mode it runs at a fraction of maximum velocity.
+        //backFlywheel.setPower(0);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class Shooter2W extends Subsystem {
 
     @Override
     public void stop() {
-        frontFlywheel.setPower(0);
-        backFlywheel.setPower(0);
+        //frontFlywheel.setPower(0);
+        //backFlywheel.setPower(0);
     }
 }
