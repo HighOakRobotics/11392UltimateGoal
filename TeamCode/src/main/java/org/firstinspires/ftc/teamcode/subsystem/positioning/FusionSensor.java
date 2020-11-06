@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.apache.commons.math3.filter.KalmanFilter;
 import org.apache.commons.math3.filter.MeasurementModel;
 import org.apache.commons.math3.filter.ProcessModel;
+import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -13,6 +14,7 @@ import java.util.function.Supplier;
 public class FusionSensor extends PositioningSensor {
 
 	KalmanFilter filter;
+	Double output;
 
 	@Override
 	public Supplier<Position> getPositionSupplier() {
@@ -24,7 +26,11 @@ public class FusionSensor extends PositioningSensor {
 		filter = new KalmanFilter(new ProcessModel() {
 			@Override
 			public RealMatrix getStateTransitionMatrix() {
-				return null;
+				return MatrixUtils.createRealMatrix(new double[][]{
+						{1.0, 0.0, 0.0},
+						{0.0, 1.0, 0.0},
+						{0.0, 0.0, 1.0}
+				});
 			}
 
 			@Override
@@ -57,26 +63,23 @@ public class FusionSensor extends PositioningSensor {
 				return null;
 			}
 		});
+		output = 0.0;
 		priority = 10;
+	}
+
+	public void update() {
+		filter.predict();
+		filter.correct(MatrixUtils.createRealVector(new double[]{}));
+		output = filter.getStateEstimation()[0];
 	}
 
 	@Override
 	public void initPeriodic() {
-
-	}
-
-	@Override
-	public void start() {
-
+		update();
 	}
 
 	@Override
 	public void runPeriodic() {
-
-	}
-
-	@Override
-	public void stop() {
-
+		update();
 	}
 }

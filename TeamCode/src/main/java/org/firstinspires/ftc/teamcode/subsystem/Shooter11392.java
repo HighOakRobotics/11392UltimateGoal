@@ -15,7 +15,7 @@ public class Shooter11392 extends Subsystem {
 	private DcMotorEx pivot;
 	private Servo loader;
 
-	private double flywheelVelocity;
+	private double flywheelVelocity; // in RPM
 	private double trackAngle;
 	private double shooterPitch;
 
