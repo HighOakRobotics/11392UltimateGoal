@@ -49,9 +49,9 @@ public class Shooter extends Subsystem {
 		track.setPosition(INIT_TRACK_ANGLE);
 		pivot.setPosition(INIT_SHOOTER_PITCH);
 
-		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		//flywheel.setMotorType();
-		flywheel.setVelocity(0); // In encoder mode it runs at a fraction of maximum velocity.
+		flywheel.setPower(0); // In encoder mode it runs at a fraction of maximum velocity.
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class Shooter extends Subsystem {
 
 	@Override
 	public void runPeriodic() {
-		flywheel.setVelocity(flywheelVelocity);
+		flywheel.setPower(flywheelVelocity);
 		track.setPosition(trackAngle);
 		pivot.setPosition(shooterPitch);
 	}
@@ -72,6 +72,6 @@ public class Shooter extends Subsystem {
 
 	@Override
 	public void stop() {
-		flywheel.setVelocity(0);
+		flywheel.setPower(0);
 	}
 }

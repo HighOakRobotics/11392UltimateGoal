@@ -22,6 +22,12 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,9 +63,16 @@ public class DriveTrainMecanum extends MecanumDrive {
 	private DoubleSupplier drivePower;
 	private DoubleSupplier strafePower;
 	private DoubleSupplier turnPower;
+	private double currentAngle;
+	private double angleRad;
+	private double driveAngleOffset;
+	private double speed;
+	private double angle;
+	private double turn;
 	private DoubleSupplier xPower;
 	private DoubleSupplier yPower;
 	private DoubleSupplier headingPower;
+
 	private Mode mode;
 	private MotionProfile turnProfile;
 	private double turnStart;
@@ -90,6 +103,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
 		parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 		imu.initialize(parameters);
+
+		driveAngleOffset = 0.0;
 
 		// TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
 		// upward (normal to the floor) using a command like the following:
@@ -124,6 +139,12 @@ public class DriveTrainMecanum extends MecanumDrive {
 		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 	}
 
+	public void recalibrateAngleOffset(){
+		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+		currentAngle = AngleUnit.RADIANS.normalize(AngleUnit.RADIANS.fromUnit(angles.angleUnit,angles.firstAngle));
+		driveAngleOffset = currentAngle;
+	}
+
 	public void setDriveDST() {
 		mode = Mode.DRIVE_DST;
 	}
@@ -146,6 +167,48 @@ public class DriveTrainMecanum extends MecanumDrive {
 		double v3 = d - s - t;
 
 		setMotorPowers(v, v1, v2, v3);
+	}
+
+	public void setDriveABS() {
+		mode = Mode.DRIVE_ABS;
+	}
+
+	public void setDriveABS(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
+		currentAngle = AngleUnit.RADIANS.normalize(AngleUnit.RADIANS.fromUnit(angles.angleUnit,angles.firstAngle));
+		currentAngle += Math.PI;
+		currentAngle *= -1;
+		currentAngle %= 2*Math.PI;
+		if(currentAngle > Math.PI){
+			currentAngle -= 2*Math.PI;
+		}
+
+		double x = Range.clip((strafe.getAsDouble() >= 0 ? 1 : -1) * Math.pow(strafe.getAsDouble(), 2), -1, 1);
+		double y = Range.clip((drive.getAsDouble() >= 0 ? 1 : -1) * Math.pow(drive.getAsDouble(), 2), -1, 1);
+		speed = Range.clip(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)),-1,1);
+		angle = Math.atan2(-x, y);
+
+		angle = angle - (currentAngle - driveAngleOffset);
+
+		this.turn = turn.getAsDouble();
+
+		angleRad = angle * (Math.PI / 180);
+		mode = Mode.DRIVE_ABS;
+	}
+
+	private void setMotorsABS() {
+		double frontLeft = (-speed * Math.cos((Math.PI / 4.0) - angle)) + (turn);
+		double frontRight = (speed * Math.cos((Math.PI / 4.0) + angle)) + (turn);
+		double backLeft = (-speed * Math.cos((Math.PI / 4.0) + angle)) + (turn);
+		double backRight = (speed * Math.cos((Math.PI / 4.0) - angle)) + (turn);
+
+		//safe drive
+		if (Math.abs(frontLeft) < 0.05 ) frontLeft = 0.0;
+		if (Math.abs(frontRight) < 0.05) frontRight = 0.0;
+		if (Math.abs(backLeft) < 0.05 ) backLeft = 0.0;
+		if (Math.abs(backRight) < 0.05) backRight = 0.0;
+
+		setMotorPowers(frontLeft, backLeft, backRight, frontRight);
 	}
 
 	public void idle() {
@@ -216,7 +279,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 				setMotorsDST();
 				break;
 			case DRIVE_ABS:
-				throw new UnsupportedOperationException("Please implement."); // TODO implement ABS
+				setMotorsABS();
 			case TURN: {
 				double t = clock.seconds() - turnStart;
 
