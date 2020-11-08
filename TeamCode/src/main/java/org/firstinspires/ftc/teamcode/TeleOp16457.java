@@ -14,7 +14,7 @@ import java.util.function.BooleanSupplier;
 
 @TeleOp(name="Tele 16457", group="16457")
 @Disabled
-class TeleOp16457 extends SequoiaOpMode {
+public class TeleOp16457 extends SequoiaOpMode {
     Shooter shooter = new Shooter();
     //OdometrySensor odometry = new OdometrySensor();
     //MecanumSubsystem drivetrain = new MecanumSubsystem(odometry.getPositionSupplier());

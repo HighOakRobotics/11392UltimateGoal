@@ -10,10 +10,8 @@ public class Shooter11392 extends Subsystem {
 
 	private final double INIT_TRACK_ANGLE = 0.0;
 	private final double INIT_SHOOTER_PITCH = 0.0;
-	private final double MAX_VELOCITY = 5000; // ?? need to tune
+	private final double MAX_VELOCITY = 6000; // ?? need to tune
 	private DcMotorEx flywheel;
-	private DcMotorEx pivot;
-	private Servo loader;
 
 	private double flywheelVelocity; // in RPM
 	private double trackAngle;
@@ -46,9 +44,6 @@ public class Shooter11392 extends Subsystem {
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
-		// TODO Grab hardware devices
-		//track.setPosition(INIT_TRACK_ANGLE);
-		//pivot.setPosition(INIT_SHOOTER_PITCH);
 
 		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		//flywheel.setMotorType();
