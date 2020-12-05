@@ -95,10 +95,10 @@ public class DriveTrainMecanum extends MecanumDrive {
 		// upward (normal to the floor) using a command like the following:
 		// BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
 
-		leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-		leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-		rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
-		rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+		leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
+		leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
+		rightRear = hardwareMap.get(DcMotorEx.class, "backRight");
+		rightFront = hardwareMap.get(DcMotorEx.class, "frontRight");
 
 		motors = Arrays.asList(leftFront, leftRear, rightRear, rightFront);
 
@@ -140,10 +140,10 @@ public class DriveTrainMecanum extends MecanumDrive {
 		double s = strafePower.getAsDouble();
 		double t = turnPower.getAsDouble();
 
-		double v = -d + s - t;
-		double v1 = -d - s - t;
-		double v2 = d + s - t;
-		double v3 = d - s - t;
+		double v = -d + s + t;
+		double v1 = -d - s + t;
+		double v2 = d - s + t;
+		double v3 = d + s + t;
 
 		setMotorPowers(v, v1, v2, v3);
 	}
