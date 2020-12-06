@@ -11,28 +11,26 @@ public class LoaderPushTask extends Task {
     Clock clock;
 
     public LoaderPushTask(Loader loader) {
+        //addSubsystems(loader);
         this.loader = loader;
-        running = true;
-        clock = new Clock();
     }
 
     @Override
     public void init() {
-        loader.open();
+        loader.setLoaderState(Loader.LoaderState.OPEN);
+        clock = new Clock();
         clock.startTiming();
+        this.running = true;
     }
 
     @Override
     public void loop() {
-        if (clock.getMillis() >= 500) {
-            running = false;
-        }
-        telemetry.addData("loader time",clock.getMillis());
+        if (clock.getMillis() >= 800)
+            stop(false);
     }
 
     @Override
     public void stop(boolean interrupted) {
-        telemetry.log().add("loader stopped by scheduler");
-        loader.close();
+        loader.setLoaderState(Loader.LoaderState.CLOSED);
     }
 }
