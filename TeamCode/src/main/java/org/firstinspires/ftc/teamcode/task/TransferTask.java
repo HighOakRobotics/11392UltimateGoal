@@ -25,5 +25,6 @@ public class TransferTask extends Task {
     @Override
     public void stop(boolean interrupted) {
         transfer.stopWheels();
+        transfer.stop();
     }
 }

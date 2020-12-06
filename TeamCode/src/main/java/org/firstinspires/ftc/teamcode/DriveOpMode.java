@@ -32,6 +32,6 @@ public class DriveOpMode extends SequoiaOpMode {
 		gamepad1H.aToggleButton().risingWithCancel(new Shooter11392ControlTask(shooter));
 		gamepad1H.xToggleButton().risingWithCancel(new ParallelTaskBundle(new IntakeTask(intake), new TransferTask(transfer)));
 		gamepad1H.sticksButton(0.05).onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
-		gamepad1H.bButton().onPress(new LoaderPushTask(loader));
+		gamepad1H.bButton().onRelease(new LoaderPushTask(loader));
 	}
 }
