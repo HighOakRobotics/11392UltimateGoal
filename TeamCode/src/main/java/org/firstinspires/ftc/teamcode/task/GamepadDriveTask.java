@@ -9,9 +9,9 @@ public class GamepadDriveTask extends StartEndTask {
 	public GamepadDriveTask(MecanumSubsystem drivetrain, Gamepad gamepad) {
 		super(() -> {
 			drivetrain.mecanum().setDriveDST(
-					() -> gamepad.left_stick_y,
-					() -> gamepad.left_stick_x,
-					() -> gamepad.right_stick_x
+					() -> gamepad.left_stick_y * Math.abs(gamepad.left_stick_y),
+					() -> gamepad.left_stick_x * Math.abs(gamepad.left_stick_x),
+					() -> gamepad.right_stick_x * Math.abs(gamepad.right_stick_x)
 			);
 		}, () -> {
 			drivetrain.mecanum().idle();
