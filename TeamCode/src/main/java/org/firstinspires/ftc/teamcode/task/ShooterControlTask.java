@@ -4,11 +4,11 @@ import com.ftc11392.sequoia.task.Task;
 
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 
-public class Shooter11392ControlTask extends Task {
+public class ShooterControlTask extends Task {
 
     Shooter shooter;
 
-    public Shooter11392ControlTask(Shooter shooter) {
+    public ShooterControlTask(Shooter shooter) {
         this.running = true;
         this.shooter = shooter;
         addSubsystems(shooter);
@@ -16,13 +16,11 @@ public class Shooter11392ControlTask extends Task {
 
     @Override
     public void init() {
-        shooter.setDesiredFlywheelVelocity(5000.0);
+        shooter.setDesiredFlywheelVelocity(3000.0);
     }
 
     @Override
-    public void loop() {
-        telemetry.addData("shooter speed", shooter.getFlywheelVelocity());
-    }
+    public void loop() {}
 
     @Override
     public void stop(boolean interrupted) {

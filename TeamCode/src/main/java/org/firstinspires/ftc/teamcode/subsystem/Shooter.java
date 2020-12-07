@@ -56,7 +56,7 @@ public class Shooter extends Subsystem {
 
 		flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		//flywheel.setMotorType();
-		flywheel.setPower(0); // In encoder mode it runs at a fraction of maximum velocity.
+		flywheel.setVelocity(0); // In encoder mode it runs at a fraction of maximum velocity.
 	}
 
 	@Override
