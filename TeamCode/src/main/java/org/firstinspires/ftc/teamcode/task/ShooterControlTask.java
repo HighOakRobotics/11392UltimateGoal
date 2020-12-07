@@ -16,11 +16,11 @@ public class ShooterControlTask extends Task {
 
     @Override
     public void init() {
-        shooter.setDesiredFlywheelVelocity(3000.0);
+        shooter.setDesiredFlywheelVelocity(2000.0);
     }
 
     @Override
-    public void loop() {}
+    public void loop() { }
 
     @Override
     public void stop(boolean interrupted) {
