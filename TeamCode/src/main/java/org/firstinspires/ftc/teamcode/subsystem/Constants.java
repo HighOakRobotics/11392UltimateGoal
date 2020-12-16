@@ -7,6 +7,6 @@ public class Constants {
 	 * Takes in RPM, outputs ticks per second.
 	 */
 	public static double rpmToTps(double rpm) {
-		return rpm * (TICKS_PER_REV/60.0);
+		return rpm * (TICKS_PER_REV / 60.0);
 	}
 }

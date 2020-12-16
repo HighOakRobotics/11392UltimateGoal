@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
 

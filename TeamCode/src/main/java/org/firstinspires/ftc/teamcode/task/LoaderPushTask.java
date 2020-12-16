@@ -7,30 +7,30 @@ import org.firstinspires.ftc.teamcode.subsystem.Loader;
 
 public class LoaderPushTask extends Task {
 
-    Loader loader;
-    Clock clock;
+	Loader loader;
+	Clock clock;
 
-    public LoaderPushTask(Loader loader) {
-        //addSubsystems(loader);
-        this.loader = loader;
-    }
+	public LoaderPushTask(Loader loader) {
+		//addSubsystems(loader);
+		this.loader = loader;
+	}
 
-    @Override
-    public void init() {
-        loader.setLoaderState(Loader.LoaderState.OPEN);
-        clock = new Clock();
-        clock.startTiming();
-        this.running = true;
-    }
+	@Override
+	public void init() {
+		loader.setLoaderState(Loader.LoaderState.OPEN);
+		clock = new Clock();
+		clock.startTiming();
+		this.running = true;
+	}
 
-    @Override
-    public void loop() {
-        if (clock.getMillis() >= 800)
-            stop(false);
-    }
+	@Override
+	public void loop() {
+		if (clock.getMillis() >= 800)
+			stop(false);
+	}
 
-    @Override
-    public void stop(boolean interrupted) {
-        loader.setLoaderState(Loader.LoaderState.CLOSED);
-    }
+	@Override
+	public void stop(boolean interrupted) {
+		loader.setLoaderState(Loader.LoaderState.CLOSED);
+	}
 }

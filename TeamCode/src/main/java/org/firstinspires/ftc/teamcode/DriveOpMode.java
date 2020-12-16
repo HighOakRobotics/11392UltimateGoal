@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.ftc11392.sequoia.SequoiaOpMode;
-import com.ftc11392.sequoia.task.ParallelTaskBundle;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
@@ -12,10 +11,9 @@ import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.IntakeTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
-import org.firstinspires.ftc.teamcode.task.TransferTask;
 import org.firstinspires.ftc.teamcode.task.ShooterControlTask;
 
-@TeleOp(name="Tele 11392", group="11392")
+@TeleOp(name = "Tele 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
@@ -25,7 +23,8 @@ public class DriveOpMode extends SequoiaOpMode {
 	MecanumSubsystem drivetrain = new MecanumSubsystem();
 
 	@Override
-	public void initTriggers() { }
+	public void initTriggers() {
+	}
 
 	@Override
 	public void runTriggers() {

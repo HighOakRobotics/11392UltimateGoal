@@ -7,40 +7,41 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake extends Subsystem {
-        private double intakePower;
-        private DcMotorEx intake;
-        public double getIntakePower() {
-        return intakePower;
-    }
+	private double intakePower;
+	private DcMotorEx intake;
 
-    public void setIntakePower(double intakePower) {
-        this.intakePower = intakePower;
-    }
+	public double getIntakePower() {
+		return intakePower;
+	}
 
-    public void initialize(HardwareMap hardwareMap){
-            intake = hardwareMap.get(DcMotorEx.class, "intake");
-            intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            intake.setDirection(DcMotorSimple.Direction.REVERSE);
-            intake.setPower(0);
-        }
+	public void setIntakePower(double intakePower) {
+		this.intakePower = intakePower;
+	}
 
-    @Override
-    public void start() {
-        intake.setPower(0);
-    }
+	public void initialize(HardwareMap hardwareMap) {
+		intake = hardwareMap.get(DcMotorEx.class, "intake");
+		intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		intake.setDirection(DcMotorSimple.Direction.REVERSE);
+		intake.setPower(0);
+	}
 
-    @Override
-    public void runPeriodic() {
-        intake.setPower(intakePower);
-    }
+	@Override
+	public void start() {
+		intake.setPower(0);
+	}
 
-    @Override
-    public void initPeriodic() {
+	@Override
+	public void runPeriodic() {
+		intake.setPower(intakePower);
+	}
 
-    }
+	@Override
+	public void initPeriodic() {
 
-    @Override
-    public void stop() {
-        intake.setPower(0);
-    }
+	}
+
+	@Override
+	public void stop() {
+		intake.setPower(0);
+	}
 }
