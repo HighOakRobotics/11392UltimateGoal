@@ -1,56 +1,65 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
-import com.ftc11392.sequoia.subsystem.PIDFSubsystem;
-import com.ftc11392.sequoia.util.PIDFController;
+import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import java.util.function.Supplier;
+public class Tilt extends Subsystem{
 
-public class Tilt extends PIDFSubsystem {
+    private static final int MIN_POSITION = 0;
+    private static final int MAX_POSITION = 300;
+    private static final double RUN_POWER = 0.8;
 
-    public static final int BASE_POSITION = 0;
-    public static final int LOADING_POSITION = 0;
-    public static final int DEFAULT_SHOOTING_POSITION = 0;
-
-    DcMotorEx tilt;
-    Supplier<Integer> feedback;
-    int initPosition;
-
-    public Tilt() {
-        super(new PIDFController(1,0,1));
-        disable();
+    private DcMotorEx tilt;
+    private double tiltPower;
+    public int offset = 0;
+    public int targetPosition = 0;
+    public double getTiltPower(){
+        return tiltPower;
     }
 
-    @Override
-    protected void useOutput(double output) {
-        tilt.setPower(output);
+    public void setTiltPower(double tiltPower){
+        this.tiltPower = tiltPower;
     }
 
-    @Override
-    protected double getFeedback() {
-        return feedback.get();
+    public int getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void setTargetPosition(int targetPosition) {
+        this.targetPosition = targetPosition;
+    }
+
+    private void setMotorTarget(int position) {
+        tilt.setTargetPosition(offset + position);
     }
 
     @Override
     public void initialize(HardwareMap hardwareMap) {
         tilt = hardwareMap.get(DcMotorEx.class, "tilt");
         tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        feedback = tilt::getCurrentPosition;
-        initPosition = feedback.get();
+        offset = tilt.getCurrentPosition();
+        tilt.setTargetPosition(offset);
+        tilt.setPower(0);
+        tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
+
+    @Override
+    public void initPeriodic() { }
 
     @Override
     public void start() {
-        enable();
+        tilt.setPower(RUN_POWER);
     }
 
-
+    @Override
+    public void runPeriodic() {
+        setMotorTarget(targetPosition);
+    }
 
     @Override
     public void stop() {
-        disable();
+        tilt.setPower(0);
     }
 }

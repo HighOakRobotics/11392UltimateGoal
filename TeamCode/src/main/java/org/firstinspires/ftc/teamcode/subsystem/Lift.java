@@ -1,14 +1,19 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Lift extends Subsystem{
 
+    private static final int MIN_POSITION = 0;
+    private static final int MAX_POSITION = 300;
+    private static final double RUN_POWER = 0.8;
+
     private DcMotorEx lift;
     private double liftPower;
-    public int startPosition = 0;
+    public int offset = 0;
     public int targetPosition = 0;
     public double getLiftPower(){
         return liftPower;
@@ -18,31 +23,43 @@ public class Lift extends Subsystem{
         this.liftPower = liftPower;
     }
 
-    @Override
-    public void initialize(HardwareMap hardwareMap) {
-        lift = hardwareMap.get(DcMotorEx.class, "lift");
-        lift.setTargetPosition(startPosition);
+    public int getTargetPosition() {
+        return targetPosition;
+    }
+
+    public void setTargetPosition(int targetPosition) {
+        this.targetPosition = targetPosition;
+    }
+
+    private void setMotorTarget(int position) {
+        lift.setTargetPosition(offset + position);
     }
 
     @Override
+    public void initialize(HardwareMap hardwareMap) {
+        lift = hardwareMap.get(DcMotorEx.class, "lift");
+        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        offset = lift.getCurrentPosition();
+        lift.setTargetPosition(offset);
+        lift.setPower(0);
+        lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    @Override
+    public void initPeriodic() { }
+
+    @Override
     public void start() {
-        lift.setTargetPosition(targetPosition);
+        lift.setPower(RUN_POWER);
     }
 
     @Override
     public void runPeriodic() {
-        //set the gamepad thing here i guess
-        //replace the 0 i mean with whatever controls you want for the gamepad
-        targetPosition = 0;
-    }
-
-    @Override
-    public void initPeriodic() {
-
+        setMotorTarget(targetPosition);
     }
 
     @Override
     public void stop() {
-
+        lift.setPower(0);
     }
 }
