@@ -10,7 +10,7 @@ public class Lift extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
 	private static final int MAX_POSITION = 300;
-	private static final double RUN_POWER = 0.8;
+	private static final double RUN_POWER = 0.0;
 	public int offset = 0;
 	public int targetPosition = 0;
 	private DcMotorEx lift;
@@ -59,6 +59,7 @@ public class Lift extends Subsystem {
 	@Override
 	public void runPeriodic() {
 		setMotorTarget(targetPosition);
+		telemetry.addData("lift", lift.getCurrentPosition() - offset);
 	}
 
 	@Override

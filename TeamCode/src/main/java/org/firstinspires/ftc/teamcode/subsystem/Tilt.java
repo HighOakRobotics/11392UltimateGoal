@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
 public class Tilt extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
-	private static final int MAX_POSITION = 300;
+	private static final int MAX_POSITION = 500;
 	private static final double RUN_POWER = 0.8;
 	public int offset = 0;
 	public int targetPosition = 0;
@@ -40,6 +41,7 @@ public class Tilt extends Subsystem {
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		tilt = hardwareMap.get(DcMotorEx.class, "tilt");
+		tilt.setDirection(DcMotorSimple.Direction.REVERSE);
 		tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 		offset = tilt.getCurrentPosition();
 		tilt.setTargetPosition(offset);
@@ -59,6 +61,7 @@ public class Tilt extends Subsystem {
 	@Override
 	public void runPeriodic() {
 		setMotorTarget(targetPosition);
+		telemetry.addData("tilt", tilt.getCurrentPosition() - offset);
 	}
 
 	@Override

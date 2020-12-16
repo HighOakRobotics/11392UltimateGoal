@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Loader extends Subsystem {
 
-	public final double LOADER_CLOSE = 1.0;
+	public final double LOADER_CLOSE = 0.5;
 	public final double LOADER_OPEN = 0.0;
 	Servo loader;
 	boolean loaderState;

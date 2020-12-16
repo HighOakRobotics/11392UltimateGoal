@@ -8,15 +8,15 @@ import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
 
 import java.util.function.Supplier;
 
-public class MecanumSubsystem extends Subsystem {
+public class Mecanum extends Subsystem {
 	DriveTrainMecanum mecanum;
 	Supplier<Position> positionSupplier;
 
-	public MecanumSubsystem() {
+	public Mecanum() {
 		// TODO deprecate after sensor system is in place
 	}
 
-	public MecanumSubsystem(Supplier<Position> positionSupplier) {
+	public Mecanum(Supplier<Position> positionSupplier) {
 		this.positionSupplier = positionSupplier;
 	}
 
