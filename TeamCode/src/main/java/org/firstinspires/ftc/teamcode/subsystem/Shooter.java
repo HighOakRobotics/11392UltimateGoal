@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -49,7 +50,8 @@ public class Shooter extends Subsystem {
 	public void initialize(HardwareMap hardwareMap) {
 		flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
-		flywheel.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 		//flywheel.setMotorType();
 		flywheel.setVelocity(0);
 	}

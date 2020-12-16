@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake extends Subsystem {
@@ -19,7 +20,7 @@ public class Intake extends Subsystem {
     public void initialize(HardwareMap hardwareMap){
             intake = hardwareMap.get(DcMotorEx.class, "intake");
             intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
+            intake.setDirection(DcMotorSimple.Direction.REVERSE);
             intake.setPower(0);
         }
 
