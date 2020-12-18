@@ -3,16 +3,12 @@ package org.firstinspires.ftc.teamcode.task;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.util.Clock;
 
+import org.firstinspires.ftc.teamcode.subsystem.Lift;
+
 public class LiftControlTask extends InstantTask {
-	Clock limiter = new Clock();
-	int minimum = 30; //ms
-
-	public LiftControlTask() {
+	public LiftControlTask(int adjustment, Lift lift) {
 		super(() -> {
-			if (limiter.getMillis() >= minimum) {
-
-			}
+			lift.modifyTarget(adjustment);
 		});
-		limiter.startTiming();
 	}
 }
