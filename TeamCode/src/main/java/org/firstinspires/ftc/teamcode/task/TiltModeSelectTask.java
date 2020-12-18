@@ -21,6 +21,9 @@ public class TiltModeSelectTask extends InstantTask {
                 case SHOOT:
                     target = SHOOT;
                     break;
+                case SHAKE:
+                    target = SHAKE;
+                    break;
                 default:
                     target = LOAD;
                     break;
@@ -30,10 +33,11 @@ public class TiltModeSelectTask extends InstantTask {
     }
 
     public enum Positions {
-        BASE, LOAD, SHOOT
+        BASE, LOAD, SHOOT, SHAKE
     }
     public static final int BASE = 0;
-    public static final int LOAD = 145;
-    public static final int SHOOT = 360;
+    public static final int LOAD = 140;
+    public static final int SHOOT = 380;
+    public static final int SHAKE = 500;
 
 }

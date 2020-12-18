@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.util.Range;
 public class Lift extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
-	private static final int MAX_POSITION = 300;
-	private static final double RUN_POWER = 0.0;
+	private static final int MAX_POSITION = 2000;
+	private static final double RUN_POWER = 0.8;
 	public int offset = 0;
 	public int targetPosition = 0;
 	private DcMotorEx lift;
@@ -30,6 +30,10 @@ public class Lift extends Subsystem {
 
 	public void setTargetPosition(int targetPosition) {
 		this.targetPosition = targetPosition;
+	}
+
+	public void modifyTarget(int tool) {
+		targetPosition = Range.clip(targetPosition + tool, MIN_POSITION, MAX_POSITION);
 	}
 
 	private void setMotorTarget(int position) {
