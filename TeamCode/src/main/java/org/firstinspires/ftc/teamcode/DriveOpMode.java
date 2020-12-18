@@ -41,9 +41,9 @@ public class DriveOpMode extends SequoiaOpMode {
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 		gamepad1H.bButton()
 				.onRelease(new LoaderPushTask(loader));
-		gamepad1H.upButton()
+		gamepad1H.rightButton()
 				.onRelease(new TiltModeSelectTask(TiltModeSelectTask.Positions.SHOOT,tilt));
-		gamepad1H.downButton()
+		gamepad1H.leftButton()
 				.onRelease(new TiltModeSelectTask(TiltModeSelectTask.Positions.LOAD, tilt));
 	}
 }
