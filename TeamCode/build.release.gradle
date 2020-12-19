@@ -8,4 +8,5 @@ dependencies {
     implementation 'com.ftc11392:sequoia:0.7.5'
     implementation 'com.acmerobotics.roadrunner:core:0.5.2'
     implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
 }
