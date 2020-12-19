@@ -16,7 +16,7 @@ public class DriveConstants {
 	 */
 	public static final double dMultiplier = 1;
 	public static final double sMultiplier = 1;
-	public static final double tMultiplier = 0.75;
+	public static final double tMultiplier = 0.6;
 
 	/*
 	 * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.

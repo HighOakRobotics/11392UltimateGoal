@@ -19,7 +19,7 @@ public class TiltModeSelectTask extends InstantTask {
             position = pos;
         }
         private final int position;
-        private int pos() {
+        public int pos() {
             return position;
         }
     }

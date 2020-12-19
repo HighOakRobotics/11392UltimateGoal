@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.IntakeTask;
 import org.firstinspires.ftc.teamcode.task.LiftControlTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
+import org.firstinspires.ftc.teamcode.task.ShakeTask;
 import org.firstinspires.ftc.teamcode.task.ShooterControlTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
@@ -32,6 +34,7 @@ public class DriveOpMode extends SequoiaOpMode {
 	Lift lift = new Lift();
 	WobbleGripper gripper = new WobbleGripper();
 	Mecanum drivetrain = new Mecanum();
+	RingDetector ringDetector = new RingDetector();
 	//OdometrySensor odometry = new OdometrySensor();
 
 	@Override
@@ -54,18 +57,9 @@ public class DriveOpMode extends SequoiaOpMode {
 						new IntakeTask(intake),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.LOAD, tilt)
 				));
-		gamepad1H.yButton()
-				.onRelease(new SequentialTaskBundle(
-						new TiltModeSelectTask(TiltModeSelectTask.Position.SHAKE, tilt),
-						new InstantTask(() -> {
-							shooter.start();
-						}),
-						new WaitTask(2),
-						new InstantTask(() -> {
-							shooter.stop();
-						}),
-						new TiltModeSelectTask(TiltModeSelectTask.Position.LOAD, tilt)
-				));
+		gamepad1H.yButton().onRelease(
+				new ShakeTask(tilt, shooter)
+		);
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 		gamepad1H.bButton()
