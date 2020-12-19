@@ -3,17 +3,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.trajectory.constraints.DriveConstraints;
 
-/*
- * Constants shared between multiple drive types.
- *
- * TODO: Tune or adjust the following constants to fit your robot. Note that the non-final
- * fields may also be edited through the dashboard (connect to the robot's WiFi network and
- * navigate to https://192.168.49.1:8080/dash). Make sure to save the values here after you
- * adjust them in the dashboard; **config variable changes don't persist between app restarts**.
- *
- * These are not the only parameters; some are located in the localizer classes, drive base classes,
- * and op modes themselves.
- */
 public class DriveConstants {
 
 	/*
@@ -21,6 +10,13 @@ public class DriveConstants {
 	 */
 	public static final double TICKS_PER_REV = 1;
 	public static final double MAX_RPM = 1;
+
+	/*
+	 * The dst multipliers.
+	 */
+	public static final double dMultiplier = 1;
+	public static final double sMultiplier = 1;
+	public static final double tMultiplier = 0.75;
 
 	/*
 	 * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.

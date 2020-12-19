@@ -157,9 +157,9 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	private void setMotorsDST() {
-		double d = drivePower.getAsDouble();
-		double s = strafePower.getAsDouble();
-		double t = turnPower.getAsDouble();
+		double d = drivePower.getAsDouble() * DriveConstants.dMultiplier;
+		double s = strafePower.getAsDouble() * DriveConstants.sMultiplier;
+		double t = turnPower.getAsDouble() * DriveConstants.tMultiplier;
 
 		double v = -d + s + t;
 		double v1 = -d - s + t;
