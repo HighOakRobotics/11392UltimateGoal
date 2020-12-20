@@ -34,7 +34,6 @@ public class DriveOpMode extends SequoiaOpMode {
 	Lift lift = new Lift();
 	WobbleGripper gripper = new WobbleGripper();
 	Mecanum drivetrain = new Mecanum();
-	RingDetector ringDetector = new RingDetector();
 	//OdometrySensor odometry = new OdometrySensor();
 
 	@Override
