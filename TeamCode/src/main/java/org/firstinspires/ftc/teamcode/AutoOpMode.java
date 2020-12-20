@@ -37,7 +37,7 @@ public class AutoOpMode extends LinearOpMode {
 
         resetScheduler();
 
-        holy = new HolyExt(hardwareMap, telemetry, this);
+        holy = new HolyExt(hardwareMap, telemetry,1,1,1,true, this);
         holy.init();
         holy.runWithEncoders();
         holy.initRT(0.8);
@@ -55,6 +55,7 @@ public class AutoOpMode extends LinearOpMode {
         loader = new Loader();
         ringDetector = new RingDetector();
 
+        Scheduler.getInstance().init(telemetry);
         Scheduler.getInstance().initSubsystems(hardwareMap);
         Scheduler.getInstance().startSubsystems();
 
@@ -96,6 +97,8 @@ public class AutoOpMode extends LinearOpMode {
         sleep(1000);
         loader.setLoaderState(Loader.LoaderState.CLOSED);
         shooter.stop();
+        tilt.setTargetPosition(0);
+        tilt.runPeriodic();
 
         if (nRings == 4) { //C
             holy.driveByInchSynchRT(68, 0.5, this);

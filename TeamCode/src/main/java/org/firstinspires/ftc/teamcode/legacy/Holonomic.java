@@ -199,7 +199,7 @@ public class Holonomic {
 		//this.stop();
 	}
 	public void driveByInchSynchRT(double inches, double power, LinearOpMode justPutThis){
-		int targetPos = (int)(inches * TICKS_PER_INCH);
+		int targetPos = (int)(inv * inches * TICKS_PER_INCH);
 
 		leftBack.setTargetPosition((leftBack.getTargetPosition() - targetPos)*inv);
 		leftFront.setTargetPosition((leftFront.getTargetPosition() - targetPos)*inv);
@@ -334,7 +334,8 @@ public class Holonomic {
 
 	public void ourStrafeByInchRT(double inches, double speed, LinearOpMode justPutThis){
 		//
-		final int targetPos = (int)(inches * TICKS_PER_INCH);
+
+		final int targetPos = (int)(inv * inches * TICKS_PER_INCH);
 		//
 		leftBack.setTargetPosition((leftBack.getTargetPosition() + targetPos + STRAFE_COMPENSATION + TURN_COMPENSATION - DRIVE_COMPENSATION)*inv);
 		leftFront.setTargetPosition((leftFront.getTargetPosition() - targetPos - STRAFE_COMPENSATION + TURN_COMPENSATION - DRIVE_COMPENSATION)*inv);
