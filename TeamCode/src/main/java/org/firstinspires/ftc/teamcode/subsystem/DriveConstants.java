@@ -20,8 +20,8 @@ public class DriveConstants {
 	/*
 	 * These are motor constants that should be listed online for your motors.
 	 */
-	public static final double TICKS_PER_REV = 1;
-	public static final double MAX_RPM = 1;
+	public static final double TICKS_PER_REV = 537.6;
+	public static final double MAX_RPM = 340;
 
 	/*
 	 * The dst multipliers.
@@ -79,6 +79,10 @@ public class DriveConstants {
 
 	public static double encoderTicksToInches(double ticks) {
 		return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+	}
+
+	public static int inchesToEncoderTicks(double inches) {
+		return (int) ((inches * TICKS_PER_REV) / (WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO));
 	}
 
 	public static double rpmToVelocity(double rpm) {

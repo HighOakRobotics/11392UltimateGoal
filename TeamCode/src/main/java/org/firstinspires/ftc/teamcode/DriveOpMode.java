@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.task.ShooterControlTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
-@TeleOp(name = "Tele 11392", group = "11392")
+@TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
