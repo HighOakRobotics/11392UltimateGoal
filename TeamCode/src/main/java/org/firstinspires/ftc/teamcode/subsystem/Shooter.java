@@ -3,27 +3,30 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class Shooter extends Subsystem {
 
 	private final double INIT_TRACK_ANGLE = 0.0;
 	private final double INIT_SHOOTER_PITCH = 0.0;
+	private final double MAX_VELOCITY = 5000; // ?? need to tune
 	private DcMotorEx flywheel;
-	private Servo loader;
-	private Servo track;
-	private Servo pivot;
-	private double flywheelVelocity;
+
+	private double flywheelVelocity; // in RPM
 	private double trackAngle;
 	private double shooterPitch;
 
-	public double getFlywheelVelocity() {
+	public double getDesiredFlywheelVelocity() {
 		return flywheelVelocity;
 	}
 
-	public void setFlywheelVelocity(double flywheelVelocity) {
+	public void setDesiredFlywheelVelocity(double flywheelVelocity) {
 		this.flywheelVelocity = flywheelVelocity;
+	}
+
+	public double getFlywheelVelocity() {
+		return flywheel.getVelocity();
 	}
 
 	public double getTrackAngle() {
@@ -44,14 +47,12 @@ public class Shooter extends Subsystem {
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
-
-		// TODO Grab hardware devices
-		track.setPosition(INIT_TRACK_ANGLE);
-		pivot.setPosition(INIT_SHOOTER_PITCH);
+		flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
 		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 		//flywheel.setMotorType();
-		flywheel.setVelocity(0); // In encoder mode it runs at a fraction of maximum velocity.
+		flywheel.setVelocity(0);
 	}
 
 	@Override
@@ -65,10 +66,8 @@ public class Shooter extends Subsystem {
 	@Override
 	public void runPeriodic() {
 		flywheel.setVelocity(flywheelVelocity);
-		track.setPosition(trackAngle);
-		pivot.setPosition(shooterPitch);
+		telemetry.addData("flywheel ", flywheel.getVelocity());
 	}
-
 
 	@Override
 	public void stop() {

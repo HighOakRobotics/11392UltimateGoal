@@ -1,40 +1,47 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.ftc11392.sequoia.subsystem.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake extends Subsystem {
-        private double intakeVelocity;
-        private DcMotorEx IntakeMotor;
-        public double getIntakeVelocity() {
-        return intakeVelocity;
-    }
+	private double intakePower;
+	private DcMotorEx intake;
 
-    public void setIntakeVelocity(double intakeVelocity) {
-        this.intakeVelocity = intakeVelocity;
-    }
-        public void initialize(HardwareMap hardwareMap){
-            IntakeMotor.setPower(0);
-        }
+	public double getIntakePower() {
+		return intakePower;
+	}
 
-    @Override
-    public void start() {
-        IntakeMotor.setVelocity(0);
-    }
+	public void setIntakePower(double intakePower) {
+		this.intakePower = intakePower;
+	}
 
-    @Override
-    public void runPeriodic() {
-        IntakeMotor.setVelocity(intakeVelocity);
-    }
+	public void initialize(HardwareMap hardwareMap) {
+		intake = hardwareMap.get(DcMotorEx.class, "intake");
+		intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+		intake.setDirection(DcMotorSimple.Direction.REVERSE);
+		intake.setPower(0);
+	}
 
-    @Override
-    public void initPeriodic() {
+	@Override
+	public void start() {
+		intake.setPower(0);
+	}
 
-    }
+	@Override
+	public void runPeriodic() {
+		intake.setPower(intakePower);
+	}
 
-    @Override
-    public void stop() {
-        IntakeMotor.setVelocity(0);
-    }
+	@Override
+	public void initPeriodic() {
+
+	}
+
+	@Override
+	public void stop() {
+		intake.setPower(0);
+	}
 }

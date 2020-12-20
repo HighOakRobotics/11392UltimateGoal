@@ -8,11 +8,15 @@ import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
 
 import java.util.function.Supplier;
 
-public class MecanumSubsystem extends Subsystem {
+public class Mecanum extends Subsystem {
 	DriveTrainMecanum mecanum;
 	Supplier<Position> positionSupplier;
 
-	public MecanumSubsystem(Supplier<Position> positionSupplier) {
+	public Mecanum() {
+		// TODO deprecate after sensor system is in place
+	}
+
+	public Mecanum(Supplier<Position> positionSupplier) {
 		this.positionSupplier = positionSupplier;
 	}
 
@@ -20,7 +24,8 @@ public class MecanumSubsystem extends Subsystem {
 	public void initialize(HardwareMap hardwareMap) {
 		priority = 20;
 		mecanum = new DriveTrainMecanum(hardwareMap);
-		mecanum.setLocalizer(new PositionLocalizer(positionSupplier));
+		if (positionSupplier != null)
+			mecanum.setLocalizer(new PositionLocalizer(positionSupplier));
 		mecanum.setMotorPowers(0, 0, 0, 0);
 		mecanum.update();
 	}
