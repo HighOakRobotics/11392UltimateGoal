@@ -438,6 +438,13 @@ public class Holonomic {
 		rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 		rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 	}
+
+	public void resetEncoder() {
+		leftFront .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		leftBack  .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		rightBack .setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+	}
 	public void turnOffBrakes() {
 		leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);

@@ -61,8 +61,10 @@ public class DriveOpMode extends SequoiaOpMode {
 		);
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
-		gamepad1H.bButton()
+		gamepad1H.rightBumperButton()
 				.onRelease(loaderPushTask);
+		gamepad1H.leftBumperButton()
+				.onPress(new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt));
 		gamepad1H.leftButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper));
 		gamepad1H.rightButton()

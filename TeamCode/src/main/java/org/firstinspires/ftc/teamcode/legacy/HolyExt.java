@@ -229,7 +229,7 @@ public class HolyExt extends Holonomic {
 	}
 
 	public void turnPIDAbsoluteSynch(double degrees, double power) {
-		AutoUtil.imuPIDTurnAbsoluteSynch(degrees, power, imu, this, justPutThis, telemetry, KpTurn, KiTurn, KdTurn, maxI, 0.5);
+		AutoUtil.imuPIDTurnAbsoluteSynch(degrees, power, imu, this, justPutThis, telemetry, KpTurn, KiTurn, KdTurn, maxI, 1);
 	}
 
 	public void turnPIDToAbsoluteZeroSynch(double power){
