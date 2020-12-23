@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
 
 @TeleOp(name="VisionTest 11392", group="11392")
-@Disabled
 public class VisionTest extends LinearOpMode {
     private RingDetector vision;
 

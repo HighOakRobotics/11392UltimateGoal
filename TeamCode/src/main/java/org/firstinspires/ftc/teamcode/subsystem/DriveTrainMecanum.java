@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
@@ -45,7 +44,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.tuning.TuningMecanumDrive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,7 +59,6 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MOTOR_VELO
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.getMotorVelocityF;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
@@ -277,7 +274,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 		return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
 	}
 
-	public void turnAsync(double angle) {
+	public void turn(double angle) {
 		double heading = getPoseEstimate().getHeading();
 
 		lastPoseOnTurn = getPoseEstimate();
@@ -293,7 +290,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 		mode = Mode.TURN;
 	}
 
-	public void followTrajectoryAsync(Trajectory trajectory) {
+	public void followTrajectory(Trajectory trajectory) {
 		follower.followTrajectory(trajectory);
 		mode = Mode.FOLLOW_TRAJECTORY;
 	}

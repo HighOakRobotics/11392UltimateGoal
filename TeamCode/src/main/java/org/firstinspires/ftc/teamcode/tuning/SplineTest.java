@@ -7,15 +7,17 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
+
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Disabled
+
 @Autonomous(group = "drive")
 public class SplineTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+        DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
         waitForStart();
 

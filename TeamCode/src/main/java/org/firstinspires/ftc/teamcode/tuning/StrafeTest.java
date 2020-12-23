@@ -7,10 +7,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
+
 /*
  * This is a simple routine to test translational drive capabilities.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class StrafeTest extends LinearOpMode {
@@ -18,7 +20,7 @@ public class StrafeTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+        DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
         Trajectory trajectory = drive.trajectoryBuilder(new Pose2d())
                 .strafeRight(DISTANCE)

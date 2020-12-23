@@ -14,6 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
+
 import java.util.List;
 
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MAX_ACCEL;
@@ -48,7 +50,7 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
  * Pressing A (on the Xbox and Logitech F310 gamepads, X on the PS4 Dualshock gamepad) will cede
  * control back to the tuning process.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class DriveVelocityPIDTuner extends LinearOpMode {
@@ -74,7 +76,7 @@ public class DriveVelocityPIDTuner extends LinearOpMode {
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+        DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
         Mode mode = Mode.TUNING_MODE;
 
