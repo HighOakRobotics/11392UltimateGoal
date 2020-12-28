@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.control.PIDCoefficients;
 import com.acmerobotics.roadrunner.control.PIDFController;
@@ -63,9 +64,10 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
 
+@Config
 public class DriveTrainMecanum extends MecanumDrive {
-	public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-	public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+	public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
+	public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
 
 	public static double LATERAL_MULTIPLIER = 1;
 
@@ -158,7 +160,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
 		// upward (normal to the floor) using a command like the following:
-		BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+		BNO055IMUUtil.remapAxes(imu, AxesOrder.ZYX, AxesSigns.NPN);
 
 		leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
 		leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -185,8 +187,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: reverse any motors using DcMotor.setDirection()
 
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		// TODO: if desired, use setLocalizer() to change the localization method
 		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -208,10 +210,10 @@ public class DriveTrainMecanum extends MecanumDrive {
 		double s = strafePower.getAsDouble() * DriveConstants.sMultiplier;
 		double t = turnPower.getAsDouble() * DriveConstants.tMultiplier;
 
-		double v = d - s - t;
-		double v1 = d + s - t;
-		double v2 = d - s + t;
-		double v3 = d + s + t;
+		double v  = -d + s + t;
+		double v1 = -d - s + t;
+		double v2 = -d + s - t;
+		double v3 = -d - s - t;
 
 		setMotorPowers(v, v1, v2, v3);
 	}
@@ -396,6 +398,9 @@ public class DriveTrainMecanum extends MecanumDrive {
 				break;
 			}
 		}
+
+		DashboardUtil.drawRobot(fieldOverlay, currentPose);
+		dashboard.sendTelemetryPacket(packet);
 	}
 
 	public boolean isBusy() {

@@ -29,6 +29,7 @@ public class SplineTest extends LinearOpMode {
 
         drive.followTrajectory(traj);
 
+        while (drive.isBusy()) drive.update();
         sleep(2000);
 
         drive.followTrajectory(
@@ -36,5 +37,7 @@ public class SplineTest extends LinearOpMode {
                         .splineTo(new Vector2d(0, 0), Math.toRadians(180))
                         .build()
         );
+
+        while (drive.isBusy()) drive.update();
     }
 }
