@@ -38,11 +38,12 @@ public class DriveOpMode extends SequoiaOpMode {
 
 	@Override
 	public void initTriggers() {
-		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 	}
 
 	@Override
 	public void runTriggers() {
+		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		LoaderPushTask loaderPushTask = new LoaderPushTask(loader);
 		gamepad1H.upButton().whilePressed(new LiftControlTask(50,lift));
 		gamepad1H.downButton().whilePressed(new LiftControlTask(-50,lift));

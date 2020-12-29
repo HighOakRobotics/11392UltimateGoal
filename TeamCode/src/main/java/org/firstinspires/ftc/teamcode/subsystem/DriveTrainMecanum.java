@@ -199,6 +199,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void setDriveDST(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		drivePower = drive;
 		strafePower = strafe;
 		turnPower = turn;
@@ -219,6 +220,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void setDriveABS() {
+		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		mode = Mode.DRIVE_ABS;
 	}
 
@@ -277,6 +279,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void turn(double angle) {
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		double heading = getPoseEstimate().getHeading();
 
 		lastPoseOnTurn = getPoseEstimate();
@@ -293,6 +296,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void followTrajectory(Trajectory trajectory) {
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		follower.followTrajectory(trajectory);
 		mode = Mode.FOLLOW_TRAJECTORY;
 	}
