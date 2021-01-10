@@ -20,7 +20,7 @@ public class VuforiaTest extends SequoiaOpMode {
     @Override
     public void runTriggers() {
         Supplier<Position> posSupplier = sensor.getPositionSupplier();
-        runLoopTrigger.rising(new RunTask(() -> {
+        gamepad1H.aButton().onPress(new RunTask(() -> {
             Position pos = posSupplier.get();
             telemetry.addData("x", pos.getxPosition());
             telemetry.addData("y", pos.getyPosition());
