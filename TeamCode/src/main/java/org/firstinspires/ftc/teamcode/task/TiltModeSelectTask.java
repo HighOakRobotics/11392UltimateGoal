@@ -12,8 +12,8 @@ public class TiltModeSelectTask extends InstantTask {
     public enum Position {
         BASE(0),
         LOAD(60),
-        SHOOT(305),
-        POWERSHOT(320),
+        SHOOT(230),
+        POWERSHOT(250),
         SHAKE(480);
 
         Position(int pos) {

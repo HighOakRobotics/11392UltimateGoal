@@ -87,14 +87,13 @@ public class VuforiaSensor extends PositioningSensor {
             double roll = rotation.firstAngle;
             double pitch = rotation.secondAngle;
             double heading = rotation.thirdAngle;
-            telemetry.addData("Vuforia Rot (rad)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", roll, pitch, heading);
+            telemetry.addData("Vuforia Rot (rad)", "{Roll, Pitch, Heading} = %.2f, %.2f, %.2f", roll, pitch, heading);
 
             position = new Position(xPos, yPos, heading);
         } else {
             telemetry.addData("Visible Target", "none");
             position = new Position(null, null, null);
         }
-        telemetry.update();
     }
 
     @Override

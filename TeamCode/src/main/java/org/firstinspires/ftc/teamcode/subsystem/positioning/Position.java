@@ -9,9 +9,9 @@ public class Position {
 	private final boolean hasY;
 	private final boolean hasHeading;
 
-	private final double xPosition; // inches
-	private final double yPosition; // inches
-	private final double heading; // radians
+	private final Double xPosition; // inches
+	private final Double yPosition; // inches
+	private final Double heading; // radians
 
 	public Position() {
 		this(0.0, 0.0, 0.0);
