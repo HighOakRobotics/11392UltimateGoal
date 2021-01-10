@@ -109,7 +109,7 @@ public class VuforiaSensor extends PositioningSensor {
             e.printStackTrace();
         }
 
-        webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+        webcamName = hardwareMap.get(WebcamName.class, "camera");
 
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
