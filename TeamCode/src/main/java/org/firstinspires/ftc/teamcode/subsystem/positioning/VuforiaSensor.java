@@ -177,6 +177,10 @@ public class VuforiaSensor extends PositioningSensor {
         targetsUltimateGoal.activate();
     }
 
+    public VuforiaLocalizer getVuforiaLocalizer() {
+        return vuforia;
+    }
+
     @Override
     public void initPeriodic() {
         update();

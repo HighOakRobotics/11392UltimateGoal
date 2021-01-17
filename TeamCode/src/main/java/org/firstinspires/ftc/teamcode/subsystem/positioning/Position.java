@@ -33,15 +33,15 @@ public class Position {
 		return time;
 	}
 
-	public double getxPosition() {
+	public Double getxPosition() {
 		return xPosition;
 	}
 
-	public double getyPosition() {
+	public Double getyPosition() {
 		return yPosition;
 	}
 
-	public double getHeading() {
+	public Double getHeading() {
 		return heading;
 	}
 
