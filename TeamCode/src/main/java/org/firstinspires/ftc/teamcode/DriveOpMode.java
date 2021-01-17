@@ -45,8 +45,8 @@ public class DriveOpMode extends SequoiaOpMode {
 	public void runTriggers() {
 		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		LoaderPushTask loaderPushTask = new LoaderPushTask(loader);
-		gamepad1H.upButton().whilePressed(new LiftControlTask(50,lift));
-		gamepad1H.downButton().whilePressed(new LiftControlTask(-50,lift));
+		gamepad1H.rightTriggerButton(0.05).whilePressed(new LiftControlTask(50,lift));
+		gamepad1H.leftTriggerButton(0.05).whilePressed(new LiftControlTask(-50,lift));
 		gamepad1H.aToggleButton()
 				.risingWithCancel(new ParallelTaskBundle(
 						new ShooterControlTask(shooter),
