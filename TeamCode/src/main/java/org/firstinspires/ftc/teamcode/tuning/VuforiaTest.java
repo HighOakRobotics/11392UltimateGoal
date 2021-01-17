@@ -40,10 +40,10 @@ public class VuforiaTest extends SequoiaOpMode {
             double y = pos.getyPosition() != null ? pos.getyPosition() : -1000;
             double heading = pos.getHeading() != null ? pos.getHeading() : -1000;
             DashboardUtil.drawRobot(packet.fieldOverlay(), new Pose2d(x,y,heading));
-            dashboardTelemetry.addData("x", x);
-            dashboardTelemetry.addData("y", y);
-            dashboardTelemetry.addData("r", heading);
-            dashboardTelemetry.addData("time", pos.getTime());
+            packet.put("x", x);
+            packet.put("y", y);
+            packet.put("r", heading);
+            packet.put("time", pos.getTime());
 
             telemetry.addData("x", x);
             telemetry.addData("y", y);
@@ -51,7 +51,6 @@ public class VuforiaTest extends SequoiaOpMode {
             telemetry.addData("time", pos.getTime());
 
             dashboard.sendTelemetryPacket(packet);
-            dashboardTelemetry.update();
         }));
     }
 }
