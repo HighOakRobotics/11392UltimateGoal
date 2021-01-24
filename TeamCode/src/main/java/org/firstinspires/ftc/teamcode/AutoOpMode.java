@@ -63,7 +63,7 @@ public class AutoOpMode extends LinearOpMode {
         Scheduler.getInstance().startSubsystems();
 
         gripper.close();
-        shooter.setDesiredFlywheelVelocity(2000);
+        shooter.setDesiredFlywheelVelocity(1900);
         shooter.runPeriodic();
         tilt.setTargetPosition(357);
         tilt.runPeriodic();
@@ -87,8 +87,8 @@ public class AutoOpMode extends LinearOpMode {
         loader.runPeriodic();
         sleep(2000);
 
-        holy.ourStrafeByInchRT(5, 0.15, this);
-        holy.driveByInchSynchRT(78,0.15, this);
+        holy.ourStrafeByInchRT(15, 0.15, this);
+        holy.driveByInchSynchRT(76,0.15, this);
         sleep(1000);
         gripper.open();
 
