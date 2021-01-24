@@ -4,6 +4,7 @@ import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.ParallelTaskBundle;
 import com.ftc11392.sequoia.task.SequentialTaskBundle;
+import com.ftc11392.sequoia.task.StartEndTask;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -52,20 +53,18 @@ public class DriveOpMode extends SequoiaOpMode {
 						new ShooterControlTask(shooter),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.SHOOT, tilt)
 				));
+		gamepad1H.yButton().onPressWithCancel(new InstantTask(() -> {intake.setIntakePower(1.0);}));
 		gamepad1H.xToggleButton()
 				.risingWithCancel(new ParallelTaskBundle(
 						new IntakeTask(intake),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.LOAD, tilt)
 				));
-		gamepad1H.yButton().onRelease(
-				new ShakeTask(tilt, shooter)
-		);
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 		gamepad1H.rightBumperButton()
 				.onRelease(loaderPushTask);
-		gamepad1H.leftBumperButton()
-				.onPress(new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt));
+		//gamepad1H.leftBumperButton()
+		//		.onPress(new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt));
 		gamepad1H.leftButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper));
 		gamepad1H.rightButton()

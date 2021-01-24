@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 public class Shooter extends Subsystem {
 
@@ -50,6 +51,9 @@ public class Shooter extends Subsystem {
 		flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
 		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(15,3,0,0));
+		PIDFCoefficients pidf = flywheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+		telemetry.log().add("Shooter PID: P:"+pidf.p+" I:"+pidf.i+" D:"+pidf.d+" F:"+pidf.f);
 		flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
 		//flywheel.setMotorType();
 		flywheel.setVelocity(0);
