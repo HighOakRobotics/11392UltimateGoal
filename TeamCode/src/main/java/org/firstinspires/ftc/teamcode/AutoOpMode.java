@@ -57,7 +57,7 @@ public class AutoOpMode extends SequoiaOpMode {
 			boxHeading = Math.PI;
 		}));
 		put(4, new InstantTask(() -> {
-			boxX = 60;
+			boxX = 52;
 			boxY = -52;
 			boxHeading = 0;
 		}));
@@ -78,10 +78,22 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+								.lineToConstantHeading(new Vector2d(-24, -58))
+								.build()
+				),
+				new FollowTrajectoryTask(
+						mecanum,
+						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
 								.lineToLinearHeading(new Pose2d(boxX + 10, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
+				new FollowTrajectoryTask(
+						mecanum,
+						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+								.lineToConstantHeading(new Vector2d(-24, -58))
+								.build()
+				),
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
@@ -99,7 +111,13 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX - 2, boxY, boxHeading)).build()
+								.lineToConstantHeading(new Vector2d(-24, -58))
+								.build()
+				),
+				new FollowTrajectoryTask(
+						mecanum,
+						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+								.lineToLinearHeading(new Pose2d(boxX + 6, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
@@ -108,20 +126,24 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(-6, -36, Math.PI))
+								.lineToLinearHeading(new Pose2d(-6, -42, Math.PI))
 								.build()
 				),
-				new LoaderPushTask(loader),
-				new LoaderPushTask(loader),
-				new LoaderPushTask(loader),
+				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
+				new WaitTask(1000, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
+				new WaitTask(1000, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
+				new WaitTask(500, TimeUnit.MILLISECONDS),
 				new StopShooterTask(shooter),
 				new TiltModeSelectTask(TiltModeSelectTask.Position.BASE, tilt),
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToConstantHeading(new Vector2d(10, -36))
+								.lineToConstantHeading(new Vector2d(10, -42))
 								.build()
-				)
+				),
+				new InstantTask(this::requestOpModeStop)
 		));
 	}
 
