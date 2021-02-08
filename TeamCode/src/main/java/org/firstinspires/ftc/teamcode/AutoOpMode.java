@@ -45,20 +45,20 @@ public class AutoOpMode extends SequoiaOpMode {
 	private int boxY = -1;
 	private double boxHeading = -1;
 
-	private HashMap<Object, Task> poseMappings = new HashMap<Object, Task>(){{
-		poseMappings.put(0, new InstantTask(() -> {
+	private final HashMap<Object, Task> poseMappings = new HashMap<Object, Task>(){{
+		put(0, new InstantTask(() -> {
 			boxX = 12;
-			boxY = -56;
+			boxY = -52;
 			boxHeading = 0;
 		}));
-		poseMappings.put(1, new InstantTask(() -> {
+		put(1, new InstantTask(() -> {
 			boxX = 36;
 			boxY = -40;
 			boxHeading = Math.PI;
 		}));
-		poseMappings.put(4, new InstantTask(() -> {
+		put(4, new InstantTask(() -> {
 			boxX = 60;
-			boxY = -56;
+			boxY = -52;
 			boxHeading = 0;
 		}));
 	}};
@@ -78,7 +78,7 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX + 4, boxY, boxHeading)).build()
+								.lineToLinearHeading(new Pose2d(boxX + 10, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
