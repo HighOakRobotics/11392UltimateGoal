@@ -26,7 +26,7 @@ public class LoaderPushTask extends Task {
 	@Override
 	public void loop() {
 		if (clock.getMillis() >= 300)
-			stop(false);
+			running = false;
 	}
 
 	@Override

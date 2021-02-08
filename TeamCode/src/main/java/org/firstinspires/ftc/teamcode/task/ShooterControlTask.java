@@ -16,7 +16,7 @@ public class ShooterControlTask extends Task {
 
 	@Override
 	public void init() {
-		shooter.setDesiredFlywheelVelocity(1450.0);
+		shooter.setDesiredFlywheelVelocity(1500.0);
 	}
 
 	@Override

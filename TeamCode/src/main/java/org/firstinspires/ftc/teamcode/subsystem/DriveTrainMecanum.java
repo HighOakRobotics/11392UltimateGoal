@@ -211,7 +211,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 		double s = strafePower.getAsDouble() * DriveConstants.sMultiplier;
 		double t = turnPower.getAsDouble() * DriveConstants.tMultiplier;
 
-		double v  = -d + s + t;
+		double v = -d + s + t;
 		double v1 = -d - s + t;
 		double v2 = -d + s - t;
 		double v3 = -d - s - t;
