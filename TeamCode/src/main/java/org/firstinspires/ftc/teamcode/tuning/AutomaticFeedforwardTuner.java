@@ -3,15 +3,15 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
-import org.firstinspires.ftc.teamcode.tuning.TuningMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.LoggingUtil;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.RegressionUtil;
 
@@ -32,191 +32,191 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.rpmToVeloc
  *   4. Adjust the encoder data based on the velocity tuning data and find kA with another linear
  *      regression.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class AutomaticFeedforwardTuner extends LinearOpMode {
-    public static final double MAX_POWER = 0.7;
-    public static final double DISTANCE = 100; // in
+	public static final double MAX_POWER = 0.7;
+	public static final double DISTANCE = 100; // in
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        if (RUN_USING_ENCODER) {
-            RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
-                    "when using the built-in drive motor velocity PID.");
-        }
+	@Override
+	public void runOpMode() throws InterruptedException {
+		if (RUN_USING_ENCODER) {
+			RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
+					"when using the built-in drive motor velocity PID.");
+		}
 
-        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+		telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+		DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
-        NanoClock clock = NanoClock.system();
+		NanoClock clock = NanoClock.system();
 
-        telemetry.addLine("Press play to begin the feedforward tuning routine");
-        telemetry.update();
+		telemetry.addLine("Press play to begin the feedforward tuning routine");
+		telemetry.update();
 
-        waitForStart();
+		waitForStart();
 
-        if (isStopRequested()) return;
+		if (isStopRequested()) return;
 
-        telemetry.clearAll();
-        telemetry.addLine("Would you like to fit kStatic?");
-        telemetry.addLine("Press (A) for yes, (B) for no");
-        telemetry.update();
+		telemetry.clearAll();
+		telemetry.addLine("Would you like to fit kStatic?");
+		telemetry.addLine("Press (A) for yes, (B) for no");
+		telemetry.update();
 
-        boolean fitIntercept = false;
-        while (!isStopRequested()) {
-            if (gamepad1.a) {
-                fitIntercept = true;
-                while (!isStopRequested() && gamepad1.a) {
-                    idle();
-                }
-                break;
-            } else if (gamepad1.b) {
-                while (!isStopRequested() && gamepad1.b) {
-                    idle();
-                }
-                break;
-            }
-            idle();
-        }
+		boolean fitIntercept = false;
+		while (!isStopRequested()) {
+			if (gamepad1.a) {
+				fitIntercept = true;
+				while (!isStopRequested() && gamepad1.a) {
+					idle();
+				}
+				break;
+			} else if (gamepad1.b) {
+				while (!isStopRequested() && gamepad1.b) {
+					idle();
+				}
+				break;
+			}
+			idle();
+		}
 
-        telemetry.clearAll();
-        telemetry.addLine(Misc.formatInvariant(
-                "Place your robot on the field with at least %.2f in of room in front", DISTANCE));
-        telemetry.addLine("Press (A) to begin");
-        telemetry.update();
+		telemetry.clearAll();
+		telemetry.addLine(Misc.formatInvariant(
+				"Place your robot on the field with at least %.2f in of room in front", DISTANCE));
+		telemetry.addLine("Press (A) to begin");
+		telemetry.update();
 
-        while (!isStopRequested() && !gamepad1.a) {
-            idle();
-        }
-        while (!isStopRequested() && gamepad1.a) {
-            idle();
-        }
+		while (!isStopRequested() && !gamepad1.a) {
+			idle();
+		}
+		while (!isStopRequested() && gamepad1.a) {
+			idle();
+		}
 
-        telemetry.clearAll();
-        telemetry.addLine("Running...");
-        telemetry.update();
+		telemetry.clearAll();
+		telemetry.addLine("Running...");
+		telemetry.update();
 
-        double maxVel = rpmToVelocity(MAX_RPM);
-        double finalVel = MAX_POWER * maxVel;
-        double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
-        double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
+		double maxVel = rpmToVelocity(MAX_RPM);
+		double finalVel = MAX_POWER * maxVel;
+		double accel = (finalVel * finalVel) / (2.0 * DISTANCE);
+		double rampTime = Math.sqrt(2.0 * DISTANCE / accel);
 
-        List<Double> timeSamples = new ArrayList<>();
-        List<Double> positionSamples = new ArrayList<>();
-        List<Double> powerSamples = new ArrayList<>();
+		List<Double> timeSamples = new ArrayList<>();
+		List<Double> positionSamples = new ArrayList<>();
+		List<Double> powerSamples = new ArrayList<>();
 
-        drive.setPoseEstimate(new Pose2d());
+		drive.setPoseEstimate(new Pose2d());
 
-        double startTime = clock.seconds();
-        while (!isStopRequested()) {
-            double elapsedTime = clock.seconds() - startTime;
-            if (elapsedTime > rampTime) {
-                break;
-            }
-            double vel = accel * elapsedTime;
-            double power = vel / maxVel;
+		double startTime = clock.seconds();
+		while (!isStopRequested()) {
+			double elapsedTime = clock.seconds() - startTime;
+			if (elapsedTime > rampTime) {
+				break;
+			}
+			double vel = accel * elapsedTime;
+			double power = vel / maxVel;
 
-            timeSamples.add(elapsedTime);
-            positionSamples.add(drive.getPoseEstimate().getX());
-            powerSamples.add(power);
+			timeSamples.add(elapsedTime);
+			positionSamples.add(drive.getPoseEstimate().getX());
+			powerSamples.add(power);
 
-            drive.setDrivePower(new Pose2d(power, 0.0, 0.0));
-            drive.updatePoseEstimate();
-        }
-        drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
+			drive.setDrivePower(new Pose2d(power, 0.0, 0.0));
+			drive.updatePoseEstimate();
+		}
+		drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
-        RegressionUtil.RampResult rampResult = RegressionUtil.fitRampData(
-                timeSamples, positionSamples, powerSamples, fitIntercept,
-                LoggingUtil.getLogFile(Misc.formatInvariant(
-                        "DriveRampRegression-%d.csv", System.currentTimeMillis())));
+		RegressionUtil.RampResult rampResult = RegressionUtil.fitRampData(
+				timeSamples, positionSamples, powerSamples, fitIntercept,
+				LoggingUtil.getLogFile(Misc.formatInvariant(
+						"DriveRampRegression-%d.csv", System.currentTimeMillis())));
 
-        telemetry.clearAll();
-        telemetry.addLine("Quasi-static ramp up test complete");
-        if (fitIntercept) {
-            telemetry.addLine(Misc.formatInvariant("kV = %.5f, kStatic = %.5f (R^2 = %.2f)",
-                    rampResult.kV, rampResult.kStatic, rampResult.rSquare));
-        } else {
-            telemetry.addLine(Misc.formatInvariant("kV = %.5f (R^2 = %.2f)",
-                    rampResult.kStatic, rampResult.rSquare));
-        }
-        telemetry.addLine("Would you like to fit kA?");
-        telemetry.addLine("Press (A) for yes, (B) for no");
-        telemetry.update();
+		telemetry.clearAll();
+		telemetry.addLine("Quasi-static ramp up test complete");
+		if (fitIntercept) {
+			telemetry.addLine(Misc.formatInvariant("kV = %.5f, kStatic = %.5f (R^2 = %.2f)",
+					rampResult.kV, rampResult.kStatic, rampResult.rSquare));
+		} else {
+			telemetry.addLine(Misc.formatInvariant("kV = %.5f (R^2 = %.2f)",
+					rampResult.kStatic, rampResult.rSquare));
+		}
+		telemetry.addLine("Would you like to fit kA?");
+		telemetry.addLine("Press (A) for yes, (B) for no");
+		telemetry.update();
 
-        boolean fitAccelFF = false;
-        while (!isStopRequested()) {
-            if (gamepad1.a) {
-                fitAccelFF = true;
-                while (!isStopRequested() && gamepad1.a) {
-                    idle();
-                }
-                break;
-            } else if (gamepad1.b) {
-                while (!isStopRequested() && gamepad1.b) {
-                    idle();
-                }
-                break;
-            }
-            idle();
-        }
+		boolean fitAccelFF = false;
+		while (!isStopRequested()) {
+			if (gamepad1.a) {
+				fitAccelFF = true;
+				while (!isStopRequested() && gamepad1.a) {
+					idle();
+				}
+				break;
+			} else if (gamepad1.b) {
+				while (!isStopRequested() && gamepad1.b) {
+					idle();
+				}
+				break;
+			}
+			idle();
+		}
 
-        if (fitAccelFF) {
-            telemetry.clearAll();
-            telemetry.addLine("Place the robot back in its starting position");
-            telemetry.addLine("Press (A) to continue");
-            telemetry.update();
+		if (fitAccelFF) {
+			telemetry.clearAll();
+			telemetry.addLine("Place the robot back in its starting position");
+			telemetry.addLine("Press (A) to continue");
+			telemetry.update();
 
-            while (!isStopRequested() && !gamepad1.a) {
-                idle();
-            }
-            while (!isStopRequested() && gamepad1.a) {
-                idle();
-            }
+			while (!isStopRequested() && !gamepad1.a) {
+				idle();
+			}
+			while (!isStopRequested() && gamepad1.a) {
+				idle();
+			}
 
-            telemetry.clearAll();
-            telemetry.addLine("Running...");
-            telemetry.update();
+			telemetry.clearAll();
+			telemetry.addLine("Running...");
+			telemetry.update();
 
-            double maxPowerTime = DISTANCE / maxVel;
+			double maxPowerTime = DISTANCE / maxVel;
 
-            timeSamples.clear();
-            positionSamples.clear();
-            powerSamples.clear();
+			timeSamples.clear();
+			positionSamples.clear();
+			powerSamples.clear();
 
-            drive.setPoseEstimate(new Pose2d());
-            drive.setDrivePower(new Pose2d(MAX_POWER, 0.0, 0.0));
+			drive.setPoseEstimate(new Pose2d());
+			drive.setDrivePower(new Pose2d(MAX_POWER, 0.0, 0.0));
 
-            startTime = clock.seconds();
-            while (!isStopRequested()) {
-                double elapsedTime = clock.seconds() - startTime;
-                if (elapsedTime > maxPowerTime) {
-                    break;
-                }
+			startTime = clock.seconds();
+			while (!isStopRequested()) {
+				double elapsedTime = clock.seconds() - startTime;
+				if (elapsedTime > maxPowerTime) {
+					break;
+				}
 
-                timeSamples.add(elapsedTime);
-                positionSamples.add(drive.getPoseEstimate().getX());
-                powerSamples.add(MAX_POWER);
+				timeSamples.add(elapsedTime);
+				positionSamples.add(drive.getPoseEstimate().getX());
+				powerSamples.add(MAX_POWER);
 
-                drive.updatePoseEstimate();
-            }
-            drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
+				drive.updatePoseEstimate();
+			}
+			drive.setDrivePower(new Pose2d(0.0, 0.0, 0.0));
 
-            RegressionUtil.AccelResult accelResult = RegressionUtil.fitAccelData(
-                    timeSamples, positionSamples, powerSamples, rampResult,
-                    LoggingUtil.getLogFile(Misc.formatInvariant(
-                            "DriveAccelRegression-%d.csv", System.currentTimeMillis())));
+			RegressionUtil.AccelResult accelResult = RegressionUtil.fitAccelData(
+					timeSamples, positionSamples, powerSamples, rampResult,
+					LoggingUtil.getLogFile(Misc.formatInvariant(
+							"DriveAccelRegression-%d.csv", System.currentTimeMillis())));
 
-            telemetry.clearAll();
-            telemetry.addLine("Constant power test complete");
-            telemetry.addLine(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)",
-                    accelResult.kA, accelResult.rSquare));
-            telemetry.update();
-        }
+			telemetry.clearAll();
+			telemetry.addLine("Constant power test complete");
+			telemetry.addLine(Misc.formatInvariant("kA = %.5f (R^2 = %.2f)",
+					accelResult.kA, accelResult.rSquare));
+			telemetry.update();
+		}
 
-        while (!isStopRequested()) {
-            idle();
-        }
-    }
+		while (!isStopRequested()) {
+			idle();
+		}
+	}
 }

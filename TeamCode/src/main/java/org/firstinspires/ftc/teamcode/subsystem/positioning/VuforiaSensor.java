@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.apache.commons.io.IOUtils;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
@@ -11,7 +12,11 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
+import org.firstinspires.ftc.teamcode.R;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -29,7 +34,7 @@ public class VuforiaSensor extends PositioningSensor {
 	private static final boolean PHONE_IS_PORTRAIT = false;
 
 	// Some other constants
-	private static final String VUFORIA_KEY = " --- YOUR NEW VUFORIA KEY GOES HERE  --- "; // TODO Vuforia Key
+	private static String VUFORIA_KEY = "";
 	private static final float MM_PER_INCH = 25.4f;
 	private static final float MM_TARGET_HEIGHT = (6) * MM_PER_INCH;          // the height of the center of the target image above the floor
 	private static final float HALF_FIELD = 72 * MM_PER_INCH;
@@ -82,21 +87,28 @@ public class VuforiaSensor extends PositioningSensor {
 			double roll = rotation.firstAngle;
 			double pitch = rotation.secondAngle;
 			double heading = rotation.thirdAngle;
-			telemetry.addData("Vuforia Rot (rad)", "{Roll, Pitch, Heading} = %.0f, %.0f, %.0f", roll, pitch, heading);
+			telemetry.addData("Vuforia Rot (rad)", "{Roll, Pitch, Heading} = %.2f, %.2f, %.2f", roll, pitch, heading);
 
 			position = new Position(xPos, yPos, heading);
 		} else {
 			telemetry.addData("Visible Target", "none");
 			position = new Position(null, null, null);
 		}
-		telemetry.update();
 	}
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		super.initialize(hardwareMap);
 
-		webcamName = hardwareMap.get(WebcamName.class, "Webcam");
+		try {
+			VUFORIA_KEY = new String(IOUtils.toCharArray(hardwareMap.appContext.getResources().openRawResource(
+					hardwareMap.appContext.getResources().getIdentifier("vuforiasecret", "raw", hardwareMap.appContext.getPackageName())
+			), Charset.defaultCharset()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		webcamName = hardwareMap.get(WebcamName.class, "camera");
 
 		VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 		parameters.vuforiaLicenseKey = VUFORIA_KEY;
@@ -163,6 +175,10 @@ public class VuforiaSensor extends PositioningSensor {
 
 		position = new Position();
 		targetsUltimateGoal.activate();
+	}
+
+	public VuforiaLocalizer getVuforiaLocalizer() {
+		return vuforia;
 	}
 
 	@Override

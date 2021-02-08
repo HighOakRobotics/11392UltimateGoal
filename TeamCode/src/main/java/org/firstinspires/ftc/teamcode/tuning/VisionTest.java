@@ -1,48 +1,44 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
-import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.Scheduler;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
 
-@TeleOp(name="VisionTest 11392", group="11392")
-@Disabled
+@TeleOp(name = "VisionTest 11392", group = "11392")
 public class VisionTest extends LinearOpMode {
-    private RingDetector vision;
+	private RingDetector vision;
 
-    private int nRings = 0;
-    @Override
-    public void runOpMode() {
-        resetScheduler();
+	private int nRings = 0;
 
-        vision = new RingDetector();
+	@Override
+	public void runOpMode() {
+		resetScheduler();
 
-        Scheduler.getInstance().initSubsystems(hardwareMap);
-        Scheduler.getInstance().startSubsystems();
+		vision = new RingDetector();
 
-        vision.start();
-        while (!isStarted()) {
-            //waitForStart();
-            nRings = vision.numOfRings();
-            telemetry.addData("rings: ","%4d", nRings);
-            telemetry.update();
-        }
-        vision.stop();
+		Scheduler.getInstance().initSubsystems(hardwareMap);
+		Scheduler.getInstance().startSubsystems();
 
-        while (opModeIsActive()) {
+		vision.start();
+		while (!isStarted()) {
+			//waitForStart();
+			nRings = vision.detectRings();
+			telemetry.addData("rings: ", "%4d", nRings);
+			telemetry.update();
+		}
+		vision.stop();
 
-        }
+		while (opModeIsActive()) {
 
-    }
+		}
 
-    private void resetScheduler() {
-        Scheduler.getInstance().cancelAll();
-        Scheduler.getInstance().clearBehaviors();
-        Scheduler.getInstance().clearSubsystems();
-    }
+	}
+
+	private void resetScheduler() {
+		Scheduler.getInstance().cancelAll();
+		Scheduler.getInstance().clearBehaviors();
+		Scheduler.getInstance().clearSubsystems();
+	}
 }

@@ -23,14 +23,15 @@ public class AutoUtil {
 	 * Turns left however many degrees using the Holonomic class's dstDrive. Cannot turn more than 360 degrees.
 	 * Note that this method is synchronous - it finishes the turn before exiting the method call. (However, the
 	 * method does stop in the case of the opMode stopping thanks to the this parameter.)
-	 * @param degrees The number of degrees you would like to turn left.
-	 *                PRECONDITION: 0 < degrees < 360.
-	 * @param holy The holonomic object that you would like to move.
-	 * @param imu The IMU object attached to obtain angular orientation with.
+	 *
+	 * @param degrees     The number of degrees you would like to turn left.
+	 *                    PRECONDITION: 0 < degrees < 360.
+	 * @param holy        The holonomic object that you would like to move.
+	 * @param imu         The IMU object attached to obtain angular orientation with.
 	 * @param justPutThis Just put the keyword "this" in the parameter field. It was the best way we
 	 *                    figured out to make isStopRequested() and opModeIsActive() functional.
 	 */
-	public static void turnLeft(double degrees, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis){
+	public static void turnLeft(double degrees, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis) {
 
 		/* First, we need to convert from the IMU's weird angle system to a 0-360 degree angle system.
 		 * The default IMU angle system is -180 at the bottom, up to 0 at the top through the right SIDE, and going down the left goes back to 180.
@@ -50,17 +51,17 @@ public class AutoUtil {
 		boolean targetPassed = false;
 
 		//Start driving. (Turn goes at full power)
-		holy.dstDrive(0,0,-0.5);
+		holy.dstDrive(0, 0, -0.5);
 
 		//While the opmode is running, there is no stop, and the target is not passed, we continue running the loop.
 		//The first two terms only exist to stop on stops.
-		while(justPutThis.opModeIsActive() && !justPutThis.isStopRequested() && !targetPassed){
+		while (justPutThis.opModeIsActive() && !justPutThis.isStopRequested() && !targetPassed) {
 			angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 			currentAngle = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)) + 180;
 
 			//If the currentAngle has yet to loop back around (by passing the 180 IMU / 360 our system mark), overloaded remains true.
 			//If overload remains true, we do a check to see if currentAngle has looped back around.
-			if(overloaded){
+			if (overloaded) {
 				overloaded = currentAngle > starterAngle;
 			}
 			/* Otherwise...
@@ -83,14 +84,15 @@ public class AutoUtil {
 	 * Turns right however many degrees using the Holonomic class's dstDrive. Cannot turn more than 360 degrees.
 	 * Note that this method is synchronous - it finishes the turn before exiting the method call. (However, the
 	 * method does stop in the case of the opMode stopping thanks to the this parameter.)
-	 * @param degrees The number of degrees you would like to turn right.
-	 *                PRECONDITION: 0 < degrees < 360.
-	 * @param holy The holonomic object that you would like to move.
-	 * @param imu The IMU object attached to obtain angular orientation with.
+	 *
+	 * @param degrees     The number of degrees you would like to turn right.
+	 *                    PRECONDITION: 0 < degrees < 360.
+	 * @param holy        The holonomic object that you would like to move.
+	 * @param imu         The IMU object attached to obtain angular orientation with.
 	 * @param justPutThis Just put the keyword "this" in the parameter field. It was the best way we
 	 *                    figured out to make isStopRequested() and opModeIsActive() functional.
 	 */
-	public static void turnRight(double degrees, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis){
+	public static void turnRight(double degrees, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis) {
 
 		/* First, we need to convert from the IMU's weird angle system to a 0-360 degree angle system.
 		 * The default IMU angle system is -180 at the bottom, up to 0 at the top through the right SIDE, and going down the left goes back to 180.
@@ -110,17 +112,17 @@ public class AutoUtil {
 		boolean targetPassed = false;
 
 		//Start driving. (Turn goes at full power)
-		holy.dstDrive(0,0,0.5);
+		holy.dstDrive(0, 0, 0.5);
 
 		//While the opmode is running, there is no stop, and the target is not passed, we continue running the loop.
 		//The first two terms only exist to stop on stops.
-		while(justPutThis.opModeIsActive() && !justPutThis.isStopRequested() && !targetPassed){
+		while (justPutThis.opModeIsActive() && !justPutThis.isStopRequested() && !targetPassed) {
 			angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 			currentAngle = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)) + 180;
 
 			//If the currentAngle has yet to loop back around (by passing the -180 IMU / 0 our system mark), overloaded remains true.
 			//If overload remains true, we do a check to see if currentAngle has looped back around.
-			if(overloaded){
+			if (overloaded) {
 				overloaded = currentAngle < starterAngle;
 			}
 			/* Otherwise...
@@ -139,7 +141,7 @@ public class AutoUtil {
 		holy.stop();
 	}
 
-	public static void imuPIDTurnAbsoluteSynch(double degrees, double power, BNO055IMU imu, Holonomic holy, LinearOpMode justPutThis, Telemetry telemetry, double Kp, double Ki, double Kd, double iMax, double margin){
+	public static void imuPIDTurnAbsoluteSynch(double degrees, double power, BNO055IMU imu, Holonomic holy, LinearOpMode justPutThis, Telemetry telemetry, double Kp, double Ki, double Kd, double iMax, double margin) {
 		holy.stopTargeting();
 
 		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
@@ -154,15 +156,15 @@ public class AutoUtil {
 
 		double p, i = 0, d;
 		double diff = degrees - currDeg;
-		if(diff > 180){
+		if (diff > 180) {
 			diff = -(360 - diff);
 		}
-		if(diff < -180){
+		if (diff < -180) {
 			diff = -(-360 - diff);
 		}
 		double prevDiff = diff;
 
-		while(justPutThis.opModeIsActive() && !justPutThis.isStopRequested()){
+		while (justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) {
 			//update current degree
 			angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 			currDeg = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
@@ -171,19 +173,19 @@ public class AutoUtil {
 
 			diff = degrees - currDeg;
 
-			if(diff > 180){
+			if (diff > 180) {
 				diff = -(360 - diff);
 			}
-			if(diff < -180){
+			if (diff < -180) {
 				diff = -(-360 - diff);
 			}
 
 			p = Kp * diff;
 			i += Ki * (diff * (curTime - prevTime));
 
-			if(i > iMax)
+			if (i > iMax)
 				i = iMax;
-			if(i < -iMax)
+			if (i < -iMax)
 				i = -iMax;
 
 			d = Kd * (diff - prevDiff) / (curTime - prevTime);
@@ -193,24 +195,23 @@ public class AutoUtil {
 			prevTime = curTime;
 			prevDiff = diff;
 
-			if(Math.abs(diff) < margin){
+			if (Math.abs(diff) < margin) {
 				if (!recording) {
 					recTime = thyme.time(TimeUnit.MILLISECONDS);
 				}
 				recording = true;
-			}
-			else {
+			} else {
 				recording = false;
 			}
-			if(recording && (curTime - recTime) > 100){
+			if (recording && (curTime - recTime) > 100) {
 				break;
 			}
 
 			telemetry.addData("diff", diff);
-			telemetry.addData("lTime", curTime-prevTime);
-			telemetry.addData("rTime", curTime-recTime);
+			telemetry.addData("lTime", curTime - prevTime);
+			telemetry.addData("rTime", curTime - recTime);
 			telemetry.addData("tTime", curTime);
-			telemetry.addData("P,I,D", "%5.2f %5.2f %5.2f", p,i,d);
+			telemetry.addData("P,I,D", "%5.2f %5.2f %5.2f", p, i, d);
 			telemetry.addData("PID", (p + i + d));
 			telemetry.addData("recording", recording);
 			telemetry.update();
@@ -218,7 +219,7 @@ public class AutoUtil {
 		holy.stop();
 	}
 
-	public static void imuTurnAbsoluteSynch (double degree, double speed, double margin, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis, Telemetry telemetry){
+	public static void imuTurnAbsoluteSynch(double degree, double speed, double margin, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis, Telemetry telemetry) {
 		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 		double currDeg = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle));
 		while (((Math.abs(degree - currDeg) > 180) ? (360 - Math.abs(degree - currDeg)) : (Math.abs(degree - currDeg))) > margin && justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) {
@@ -226,8 +227,7 @@ public class AutoUtil {
 
 			if ((degree - currDeg) > 1) {
 				holy.dstDrive(0.0, 0.0, -speed);
-			}
-			else if ((degree - currDeg) < -1) {
+			} else if ((degree - currDeg) < -1) {
 				holy.dstDrive(0.0, 0.0, speed);
 			}
 
@@ -239,20 +239,20 @@ public class AutoUtil {
 		holy.stop();
 	}
 
-	public static void imu2StepTurnAbsoluteSynch(double degree, double speed1, double speed2, double margin1, double margin2, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis, Telemetry telemetry){
+	public static void imu2StepTurnAbsoluteSynch(double degree, double speed1, double speed2, double margin1, double margin2, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis, Telemetry telemetry) {
 		imuTurnAbsoluteSynch(degree, speed1, margin1, holy, imu, justPutThis, telemetry);
 		imuTurnAbsoluteSynch(degree, speed2, margin2, holy, imu, justPutThis, telemetry);
 	}
 
 	@Deprecated
-	public static void turnToAbsoluteZero(double speed, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis){
-		turnAbsolute2Step(0,speed,holy,imu,justPutThis);
+	public static void turnToAbsoluteZero(double speed, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis) {
+		turnAbsolute2Step(0, speed, holy, imu, justPutThis);
 	}
 
 	@Deprecated
 	public static void turnAbsolute2Step(int degree, double speed, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis) {
 		turnToAbsolutePosition(degree, speed, holy, imu, justPutThis);
-		turnToAbsolutePosition(degree, speed/2, holy, imu, justPutThis);
+		turnToAbsolutePosition(degree, speed / 2, holy, imu, justPutThis);
 	}
 
 	@Deprecated
@@ -276,21 +276,23 @@ public class AutoUtil {
 	}
 
 	@Deprecated
-	public static void imu2StepTurn(BNO055IMU imu, double speed1, double speed2, double degree, Holonomic holy, Telemetry telemetry ) {
-		imuTurn(imu, speed1, degree, 1,holy, telemetry);
-		imuTurn(imu, speed2, degree, 1,holy, telemetry);
+	public static void imu2StepTurn(BNO055IMU imu, double speed1, double speed2, double degree, Holonomic holy, Telemetry telemetry) {
+		imuTurn(imu, speed1, degree, 1, holy, telemetry);
+		imuTurn(imu, speed2, degree, 1, holy, telemetry);
 	}
 
 	@Deprecated
-	public static void turnToAbsolutePosition(int degree, double speed, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis){
+	public static void turnToAbsolutePosition(int degree, double speed, Holonomic holy, BNO055IMU imu, LinearOpMode justPutThis) {
 		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
 		double currentAngle = AngleUnit.DEGREES.normalize(AngleUnit.DEGREES.fromUnit(angles.angleUnit, angles.firstAngle)) + 180;
 		if (currentAngle < degree) {
 			holy.dstDrive(0, 0, -speed);
-			while (currentAngle < degree && justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) { }
+			while (currentAngle < degree && justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) {
+			}
 		} else {
 			holy.dstDrive(0, 0, speed);
-			while (currentAngle > degree && justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) { }
+			while (currentAngle > degree && justPutThis.opModeIsActive() && !justPutThis.isStopRequested()) {
+			}
 		}
 
 		holy.stop();

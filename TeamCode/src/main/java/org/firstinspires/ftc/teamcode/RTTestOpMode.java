@@ -10,35 +10,36 @@ import org.firstinspires.ftc.teamcode.subsystem.DriveConstants;
 
 @Autonomous
 public class RTTestOpMode extends LinearOpMode {
-    private HolyExt holy;
-    private double TURN_KMI = 0.08;
-    private double TURN_KP = 0.06;
-    private double TURN_KI = 0.0018;
-    private double TURN_KD = 2.5;
-    private double TURN_KF = 0.0;
-    @Override
-    public void runOpMode() throws InterruptedException {
-        resetScheduler();
+	private HolyExt holy;
+	private double TURN_KMI = 0.08;
+	private double TURN_KP = 0.06;
+	private double TURN_KI = 0.0018;
+	private double TURN_KD = 2.5;
+	private double TURN_KF = 0.0;
 
-        holy = new HolyExt(hardwareMap, telemetry,1,1,1,true, this);
-        holy.init();
-        holy.resetEncoder();
-        holy.initRT(0.8);
-        holy.turnOffBrakes();
-        holy.setTPR(DriveConstants.TICKS_PER_REV);
-        holy.setMaxI(TURN_KMI);
-        holy.setPIDTurnCoefficients(new PIDFCoefficients(TURN_KP, TURN_KI, TURN_KD, TURN_KF));
+	@Override
+	public void runOpMode() throws InterruptedException {
+		resetScheduler();
 
-        waitForStart();
+		holy = new HolyExt(hardwareMap, telemetry, 1, 1, 1, true, this);
+		holy.init();
+		holy.resetEncoder();
+		holy.initRT(0.8);
+		holy.turnOffBrakes();
+		holy.setTPR(DriveConstants.TICKS_PER_REV);
+		holy.setMaxI(TURN_KMI);
+		holy.setPIDTurnCoefficients(new PIDFCoefficients(TURN_KP, TURN_KI, TURN_KD, TURN_KF));
 
-        holy.driveByInchSynchRT(10,0.6,this);
-        holy.turnPIDAbsoluteSynch(0, 0.5);
-        holy.driveByInchSynchRT(10,0.6,this);
-    }
+		waitForStart();
 
-    private void resetScheduler() {
-        Scheduler.getInstance().cancelAll();
-        Scheduler.getInstance().clearBehaviors();
-        Scheduler.getInstance().clearSubsystems();
-    }
+		holy.driveByInchSynchRT(10, 0.6, this);
+		holy.turnPIDAbsoluteSynch(0, 0.5);
+		holy.driveByInchSynchRT(10, 0.6, this);
+	}
+
+	private void resetScheduler() {
+		Scheduler.getInstance().cancelAll();
+		Scheduler.getInstance().clearBehaviors();
+		Scheduler.getInstance().clearSubsystems();
+	}
 }

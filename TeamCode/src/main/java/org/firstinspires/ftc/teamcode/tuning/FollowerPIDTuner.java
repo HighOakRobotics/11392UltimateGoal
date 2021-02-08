@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
+
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
  * classes). The robot drives in a DISTANCE-by-DISTANCE square indefinitely. Utilization of the
@@ -20,32 +22,34 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * If you are using SampleTankDrive, you should be tuning AXIAL_PID, CROSS_TRACK_PID, and HEADING_PID.
  * These coefficients can be tuned live in dashboard.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class FollowerPIDTuner extends LinearOpMode {
-    public static double DISTANCE = 48; // in
+	public static double DISTANCE = 48; // in
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+	@Override
+	public void runOpMode() throws InterruptedException {
+		DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
-        Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
+		Pose2d startPose = new Pose2d(-DISTANCE / 2, -DISTANCE / 2, 0);
 
-        drive.setPoseEstimate(startPose);
+		drive.setPoseEstimate(startPose);
 
-        waitForStart();
+		waitForStart();
 
-        if (isStopRequested()) return;
+		if (isStopRequested()) return;
 
-        while (!isStopRequested()) {
-            Trajectory traj = drive.trajectoryBuilder(startPose)
-                    .forward(DISTANCE)
-                    .build();
-            drive.followTrajectory(traj);
-            drive.turn(Math.toRadians(90));
+		while (!isStopRequested()) {
+			Trajectory traj = drive.trajectoryBuilder(startPose)
+					.forward(DISTANCE)
+					.build();
+			drive.followTrajectory(traj);
+			while (drive.isBusy()) drive.update();
+			drive.turn(Math.toRadians(90));
+			while (drive.isBusy()) drive.update();
 
-            startPose = traj.end().plus(new Pose2d(0, 0, Math.toRadians(90)));
-        }
-    }
+			startPose = traj.end().plus(new Pose2d(0, 0, Math.toRadians(90)));
+		}
+	}
 }

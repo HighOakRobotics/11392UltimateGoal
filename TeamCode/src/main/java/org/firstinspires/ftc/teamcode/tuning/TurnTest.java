@@ -2,28 +2,29 @@ package org.firstinspires.ftc.teamcode.tuning;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.tuning.TuningMecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
 
 /*
  * This is a simple routine to test turning capabilities.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class TurnTest extends LinearOpMode {
-    public static double ANGLE = 90; // deg
+	public static double ANGLE = 90; // deg
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+	@Override
+	public void runOpMode() throws InterruptedException {
+		DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
-        waitForStart();
+		waitForStart();
 
-        if (isStopRequested()) return;
+		if (isStopRequested()) return;
 
-        drive.turn(Math.toRadians(ANGLE));
-    }
+		drive.turn(Math.toRadians(ANGLE));
+
+		while (drive.isBusy()) drive.update();
+	}
 }

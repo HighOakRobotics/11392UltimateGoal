@@ -45,7 +45,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.tuning.TuningMecanumDrive;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,14 +60,14 @@ import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MOTOR_VELO
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.RUN_USING_ENCODER;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.TRACK_WIDTH;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.encoderTicksToInches;
-import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.getMotorVelocityF;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kA;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kStatic;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.kV;
 
+@Config
 public class DriveTrainMecanum extends MecanumDrive {
-	public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(0, 0, 0);
-	public static PIDCoefficients HEADING_PID = new PIDCoefficients(0, 0, 0);
+	public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(5, 0, 0);
+	public static PIDCoefficients HEADING_PID = new PIDCoefficients(3, 0, 0);
 
 	public static double LATERAL_MULTIPLIER = 1;
 
@@ -161,7 +160,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
 		// upward (normal to the floor) using a command like the following:
-		BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
+		BNO055IMUUtil.remapAxes(imu, AxesOrder.ZYX, AxesSigns.NPN);
 
 		leftFront = hardwareMap.get(DcMotorEx.class, "frontLeft");
 		leftRear = hardwareMap.get(DcMotorEx.class, "backLeft");
@@ -188,8 +187,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: reverse any motors using DcMotor.setDirection()
 
-		leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-		leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+		rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
 		// TODO: if desired, use setLocalizer() to change the localization method
 		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
@@ -200,6 +199,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void setDriveDST(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
+		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		drivePower = drive;
 		strafePower = strafe;
 		turnPower = turn;
@@ -211,15 +211,16 @@ public class DriveTrainMecanum extends MecanumDrive {
 		double s = strafePower.getAsDouble() * DriveConstants.sMultiplier;
 		double t = turnPower.getAsDouble() * DriveConstants.tMultiplier;
 
-		double v = d - s - t;
-		double v1 = d + s - t;
-		double v2 = d - s + t;
-		double v3 = d + s + t;
+		double v = -d + s + t;
+		double v1 = -d - s + t;
+		double v2 = -d + s - t;
+		double v3 = -d - s - t;
 
 		setMotorPowers(v, v1, v2, v3);
 	}
 
 	public void setDriveABS() {
+		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		mode = Mode.DRIVE_ABS;
 	}
 
@@ -277,7 +278,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 		return new TrajectoryBuilder(startPose, startHeading, velConstraint, accelConstraint);
 	}
 
-	public void turnAsync(double angle) {
+	public void turn(double angle) {
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		double heading = getPoseEstimate().getHeading();
 
 		lastPoseOnTurn = getPoseEstimate();
@@ -293,7 +295,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 		mode = Mode.TURN;
 	}
 
-	public void followTrajectoryAsync(Trajectory trajectory) {
+	public void followTrajectory(Trajectory trajectory) {
+		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		follower.followTrajectory(trajectory);
 		mode = Mode.FOLLOW_TRAJECTORY;
 	}
@@ -399,6 +402,9 @@ public class DriveTrainMecanum extends MecanumDrive {
 				break;
 			}
 		}
+
+		DashboardUtil.drawRobot(fieldOverlay, currentPose);
+		dashboard.sendTelemetryPacket(packet);
 	}
 
 	public boolean isBusy() {

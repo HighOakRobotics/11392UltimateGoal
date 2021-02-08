@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
+
 /*
  * Op mode for preliminary tuning of the follower PID coefficients (located in the drive base
  * classes). The robot drives back and forth in a straight line indefinitely. Utilization of the
@@ -23,30 +25,30 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  * This opmode is designed as a convenient, coarse tuning for the follower PID coefficients. It
  * is recommended that you use the FollowerPIDTuner opmode for further fine tuning.
  */
-@Disabled
+
 @Config
 @Autonomous(group = "drive")
 public class BackAndForth extends LinearOpMode {
 
-    public static double DISTANCE = 50;
+	public static double DISTANCE = 50;
 
-    @Override
-    public void runOpMode() throws InterruptedException {
-        TuningMecanumDrive drive = new TuningMecanumDrive(hardwareMap);
+	@Override
+	public void runOpMode() throws InterruptedException {
+		DriveTrainMecanum drive = new DriveTrainMecanum(hardwareMap);
 
-        Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
-                .forward(DISTANCE)
-                .build();
+		Trajectory trajectoryForward = drive.trajectoryBuilder(new Pose2d())
+				.forward(DISTANCE)
+				.build();
 
-        Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
-                .back(DISTANCE)
-                .build();
+		Trajectory trajectoryBackward = drive.trajectoryBuilder(trajectoryForward.end())
+				.back(DISTANCE)
+				.build();
 
-        waitForStart();
+		waitForStart();
 
-        while (opModeIsActive() && !isStopRequested()) {
-            drive.followTrajectory(trajectoryForward);
-            drive.followTrajectory(trajectoryBackward);
-        }
-    }
+		while (opModeIsActive() && !isStopRequested()) {
+			drive.followTrajectory(trajectoryForward);
+			drive.followTrajectory(trajectoryBackward);
+		}
+	}
 }
