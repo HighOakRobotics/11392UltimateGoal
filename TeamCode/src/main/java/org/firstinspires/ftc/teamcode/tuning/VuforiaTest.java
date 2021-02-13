@@ -18,39 +18,39 @@ import java.util.function.Supplier;
 @TeleOp
 public class VuforiaTest extends SequoiaOpMode {
 
-    VuforiaSensor sensor = new VuforiaSensor();
-    FtcDashboard dashboard = FtcDashboard.getInstance();
-    Telemetry dashboardTelemetry = dashboard.getTelemetry();
+	VuforiaSensor sensor = new VuforiaSensor();
+	FtcDashboard dashboard = FtcDashboard.getInstance();
+	Telemetry dashboardTelemetry = dashboard.getTelemetry();
 
-    @Override
-    public void initTriggers() {
+	@Override
+	public void initTriggers() {
 
-    }
+	}
 
-    @Override
-    public void runTriggers() {
-        dashboard.startCameraStream(sensor.getVuforiaLocalizer(), 0);
-        Supplier<Position> posSupplier = sensor.getPositionSupplier();
-        gamepad1H.aToggleButton().whileOn(new InstantTask(() -> {
-            TelemetryPacket packet = new TelemetryPacket();
+	@Override
+	public void runTriggers() {
+		dashboard.startCameraStream(sensor.getVuforiaLocalizer(), 0);
+		Supplier<Position> posSupplier = sensor.getPositionSupplier();
+		gamepad1H.aToggleButton().whileOn(new InstantTask(() -> {
+			TelemetryPacket packet = new TelemetryPacket();
 
-            Position pos = posSupplier.get();
+			Position pos = posSupplier.get();
 
-            double x = pos.getxPosition() != null ? pos.getxPosition() : -1000;
-            double y = pos.getyPosition() != null ? pos.getyPosition() : -1000;
-            double heading = pos.getHeading() != null ? pos.getHeading() : -1000;
-            DashboardUtil.drawRobot(packet.fieldOverlay(), new Pose2d(x,y,heading));
-            packet.put("x", x);
-            packet.put("y", y);
-            packet.put("r", heading);
-            packet.put("time", pos.getTime());
+			double x = pos.getxPosition() != null ? pos.getxPosition() : -1000;
+			double y = pos.getyPosition() != null ? pos.getyPosition() : -1000;
+			double heading = pos.getHeading() != null ? pos.getHeading() : -1000;
+			DashboardUtil.drawRobot(packet.fieldOverlay(), new Pose2d(x, y, heading));
+			packet.put("x", x);
+			packet.put("y", y);
+			packet.put("r", heading);
+			packet.put("time", pos.getTime());
 
-            telemetry.addData("x", x);
-            telemetry.addData("y", y);
-            telemetry.addData("r", heading);
-            telemetry.addData("time", pos.getTime());
+			telemetry.addData("x", x);
+			telemetry.addData("y", y);
+			telemetry.addData("r", heading);
+			telemetry.addData("time", pos.getTime());
 
-            dashboard.sendTelemetryPacket(packet);
-        }));
-    }
+			dashboard.sendTelemetryPacket(packet);
+		}));
+	}
 }

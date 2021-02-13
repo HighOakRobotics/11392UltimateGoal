@@ -11,31 +11,30 @@ public class Trajectory {
 		//this.splint = splint;
 	}
 
-	public Trajectory(Positron[] trajectory, boolean inverted){
+	public Trajectory(Positron[] trajectory, boolean inverted) {
 		//SplineInterpolator splint = new SplineInterpolator();
 		double[] xPos = new double[trajectory.length];
 		double[] yPos = new double[trajectory.length];
 
-		for(int i = 0; i < trajectory.length; i++){
+		for (int i = 0; i < trajectory.length; i++) {
 			xPos[i] = trajectory[i].getX();
 			yPos[i] = trajectory[i].getY();
 		}
 
 		//if inverted is true then the robot needs to go vertical at some point
 		//if the robot both needs to go
-		if(!inverted){
+		if (!inverted) {
 			startX = xPos[0];
 			endX = xPos[trajectory.length - 1];
 			//this.splint = splint.interpolate(xPos, yPos);
-		}
-		else {
+		} else {
 			startX = yPos[0];
 			endX = yPos[trajectory.length - 1];
 			//this.splint = splint.interpolate(yPos, xPos);
 		}
 	}
 
-	public Trajectory(Positron[] trajectory){
+	public Trajectory(Positron[] trajectory) {
 		this(trajectory, false);
 	}
 
