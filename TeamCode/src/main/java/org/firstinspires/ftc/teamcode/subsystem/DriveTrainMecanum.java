@@ -192,6 +192,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: if desired, use setLocalizer() to change the localization method
 		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
+		setLocalizer(new TwoWheelLocalizer(hardwareMap, this::getRawExternalHeading));
 	}
 
 	public void setDriveDST() {
