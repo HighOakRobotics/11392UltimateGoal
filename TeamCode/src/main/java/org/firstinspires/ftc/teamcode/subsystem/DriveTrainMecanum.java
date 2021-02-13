@@ -280,7 +280,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void turn(double angle) {
-		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		//setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		double heading = getPoseEstimate().getHeading();
 
 		lastPoseOnTurn = getPoseEstimate();
@@ -297,7 +297,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	}
 
 	public void followTrajectory(Trajectory trajectory) {
-		setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+		//setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 		follower.followTrajectory(trajectory);
 		mode = Mode.FOLLOW_TRAJECTORY;
 	}

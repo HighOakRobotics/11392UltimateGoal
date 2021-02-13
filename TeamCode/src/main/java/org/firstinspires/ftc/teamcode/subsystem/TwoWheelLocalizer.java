@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
 	public static double TICKS_PER_REV = 8192; // 2048 quadrature cycles
-	public static double WHEEL_RADIUS = 2; // in TODO REPLACE WITH MEASUREMENT
+	public static double WHEEL_RADIUS = 0.74; // in
 	public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
 	private Encoder centerEncoder;
@@ -26,11 +26,11 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 	public TwoWheelLocalizer(HardwareMap hardwareMap, Supplier<Double> headingSupplier) {
 		super(Arrays.asList(
 				new Pose2d(-2.473, 0.087, Math.toDegrees(90)), //horizontal (center)
-				new Pose2d(-2.165, -2.773, 0) //vertical
+				new Pose2d(-2.165, -2.773, 0) //vertical (right)
 		));
 
-		centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "centerEncoder"));
-		rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+		centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
+		rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontRight"));
 
 		// Encoder.setDirection(Encoder.Direction.REVERSE)
 
