@@ -25,8 +25,8 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
 	public TwoWheelLocalizer(HardwareMap hardwareMap, Supplier<Double> headingSupplier) {
 		super(Arrays.asList(
-				new Pose2d(-2.473, 0.087, Math.toDegrees(90)), //horizontal (center)
-				new Pose2d(-2.165, -2.773, 0) //vertical (right)
+				new Pose2d(-2.473, 0.087, -1*Math.PI / 2), //horizontal (center)
+				new Pose2d(-2.915, -2.773, 0) //vertical (right)
 		));
 
 		centerEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));

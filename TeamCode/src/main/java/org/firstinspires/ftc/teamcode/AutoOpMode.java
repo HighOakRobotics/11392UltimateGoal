@@ -84,7 +84,7 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX + 10, boxY, boxHeading)).build()
+								.lineToLinearHeading(new Pose2d(boxX, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
@@ -117,7 +117,7 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX + 6, boxY, boxHeading)).build()
+								.lineToLinearHeading(new Pose2d(boxX - 6, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
@@ -129,12 +129,12 @@ public class AutoOpMode extends SequoiaOpMode {
 								.lineToLinearHeading(new Pose2d(-6, -42, Math.PI))
 								.build()
 				),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(1000, TimeUnit.MILLISECONDS),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(1000, TimeUnit.MILLISECONDS),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(500, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
 				new StopShooterTask(shooter),
 				new TiltModeSelectTask(TiltModeSelectTask.Position.BASE, tilt),
 				new FollowTrajectoryTask(

@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.tuning;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.util.NanoClock;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -120,6 +119,8 @@ public class AutomaticFeedforwardTuner extends LinearOpMode {
 
 			timeSamples.add(elapsedTime);
 			positionSamples.add(drive.getPoseEstimate().getX());
+
+			System.out.println(drive.getPoseEstimate().toString());
 			powerSamples.add(power);
 
 			drive.setDrivePower(new Pose2d(power, 0.0, 0.0));

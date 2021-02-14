@@ -107,7 +107,7 @@ public class RingDetector extends Subsystem {
 			RAW_IMAGE,//displays raw view
 		}
 
-		private Stage stageToRenderToViewport = Stage.detection;
+		private Stage stageToRenderToViewport = Stage.THRESHOLD;
 		private Stage[] stages = Stage.values();
 
 		Mat yCbCrChan2Mat = new Mat(); //the popular JPEG image format
@@ -133,10 +133,6 @@ public class RingDetector extends Subsystem {
 		@Override
 		public Mat processFrame(Mat input) {
 			contoursList.clear();
-			/*
-			 * This pipeline finds the contours of yellow blobs such as the Gold Mineral
-			 * from the Rover Ruckus game.
-			 */
 
 			//color diff cb.
 			//lower cb = more blue = skystone = white
@@ -145,7 +141,7 @@ public class RingDetector extends Subsystem {
 			Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);//takes cb difference and stores
 
 			//b&w
-			Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+			Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 110, 255, Imgproc.THRESH_BINARY_INV);
 
 			//outline/contour
 			Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
