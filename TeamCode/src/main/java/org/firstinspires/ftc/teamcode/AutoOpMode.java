@@ -53,7 +53,7 @@ public class AutoOpMode extends SequoiaOpMode {
 		}));
 		put(1, new InstantTask(() -> {
 			boxX = 36;
-			boxY = -40;
+			boxY = -44;
 			boxHeading = Math.PI;
 		}));
 		put(4, new InstantTask(() -> {

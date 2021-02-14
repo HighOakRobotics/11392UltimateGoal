@@ -21,8 +21,6 @@ import org.firstinspires.ftc.teamcode.task.ShooterControlTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
-import java.util.concurrent.TimeUnit;
-
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
 	Shooter shooter = new Shooter();
@@ -60,7 +58,7 @@ public class DriveOpMode extends SequoiaOpMode {
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 		gamepad1H.rightBumperButton()
-				.onRelease(new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS));
+				.onRelease(new LoaderPushTask(loader));
 		//gamepad1H.leftBumperButton()
 		//		.onPress(new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt));
 		gamepad1H.leftButton()
