@@ -65,6 +65,7 @@ import org.firstinspires.ftc.teamcode.subsystem.positioning.StandardTrackingWhee
 
 @Config
 @TeleOp(group = "drive")
+@Disabled
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 	public static int NUM_TURNS = 10;
 

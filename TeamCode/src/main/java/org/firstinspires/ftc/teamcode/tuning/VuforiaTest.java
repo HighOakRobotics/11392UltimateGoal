@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
-import com.ftc11392.sequoia.task.RunTask;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystem.roadrunner.DashboardUtil;
 import java.util.function.Supplier;
 
 @TeleOp
+@Disabled
 public class VuforiaTest extends SequoiaOpMode {
 
 	VuforiaSensor sensor = new VuforiaSensor();

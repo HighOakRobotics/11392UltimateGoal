@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.ftc11392.sequoia.task.Scheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.legacy.HolyExt;
 import org.firstinspires.ftc.teamcode.subsystem.DriveConstants;
 
 @Autonomous
+@Disabled
 public class RTTestOpMode extends LinearOpMode {
 	private HolyExt holy;
 	private double TURN_KMI = 0.08;

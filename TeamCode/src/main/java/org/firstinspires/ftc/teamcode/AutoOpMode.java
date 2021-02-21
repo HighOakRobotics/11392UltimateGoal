@@ -10,6 +10,7 @@ import com.ftc11392.sequoia.task.SwitchTask;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
@@ -30,7 +31,7 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "AutoOpMode 11392", group = "11392", preselectTeleOp = "DriveOpMode 11392")
-//@Disabled
+@Disabled
 public class AutoOpMode extends SequoiaOpMode {
 	private final Lift lift = new Lift();
 	private final Tilt tilt = new Tilt();

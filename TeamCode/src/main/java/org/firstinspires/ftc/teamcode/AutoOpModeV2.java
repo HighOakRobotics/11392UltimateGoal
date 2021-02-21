@@ -48,6 +48,8 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 	private int boxY = -1;
 	private double boxHeading = -1;
 
+	private int rings = 0;
+
 	private final HashMap<Object, Task> poseMappings = new HashMap<Object, Task>(){{
 		put(0, new InstantTask(() -> {
 			boxX = -3;
@@ -76,6 +78,7 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 	public void runTriggers() {
 		Scheduler.getInstance().schedule(new SequentialTaskBundle(
 				// Load in mappings
+				new InstantTask(() -> rings = ringDetector.getDetectedRings()),
 				new SwitchTask(poseMappings, ringDetector::getDetectedRings),
 				closeGripper(),
 				shootPowerShots(),
@@ -88,13 +91,9 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 				followConstantTrajectory(() -> new Vector2d(-24, -56)),
 				followTrajectory(() -> new Pose2d(boxX - 4, boxY + 4, boxHeading)),
 				openGripper(),
-
 				//shootRings(3),
-				new ConditionalTask(
-						followConstantTrajectory(() -> new Vector2d(10, -42)),
-						new InstantTask(() -> {}),
-						() -> ringDetector.getDetectedRings() != 0
-				),
+				new ConditionalTask(followConstantTrajectory(() -> new Vector2d(10, -42)),
+						new InstantTask(() -> {}), () -> rings != 0),
 				new InstantTask(this::requestOpModeStop)
 		));
 	}
