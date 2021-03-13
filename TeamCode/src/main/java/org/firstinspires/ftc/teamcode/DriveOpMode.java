@@ -14,10 +14,11 @@ import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
-import org.firstinspires.ftc.teamcode.task.IntakeTask;
 import org.firstinspires.ftc.teamcode.task.LiftControlTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
-import org.firstinspires.ftc.teamcode.task.ShooterControlTask;
+import org.firstinspires.ftc.teamcode.task.ResetTiltTask;
+import org.firstinspires.ftc.teamcode.task.StartShooterTask;
+import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
@@ -42,18 +43,25 @@ public class DriveOpMode extends SequoiaOpMode {
 		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		gamepad1H.rightTriggerButton(0.05).whilePressed(new LiftControlTask(50, lift));
 		gamepad1H.leftTriggerButton(0.05).whilePressed(new LiftControlTask(-50, lift));
-		gamepad1H.aToggleButton()
-				.risingWithCancel(new ParallelTaskBundle(
-						new ShooterControlTask(shooter),
+		gamepad1H.aButton()
+				.rising(new ParallelTaskBundle(
+						new InstantTask(() -> {intake.setIntakePower(0);}),
+						new StartShooterTask(shooter),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.SHOOT, tilt)
 				));
 		gamepad1H.yButton().onPressWithCancel(new InstantTask(() -> {
 			intake.setIntakePower(1.0);
 		}));
-		gamepad1H.xToggleButton()
-				.risingWithCancel(new ParallelTaskBundle(
-						new IntakeTask(intake),
+		gamepad1H.xButton()
+				.rising(new ParallelTaskBundle(
+						new InstantTask(() -> {intake.setIntakePower(-0.7);}),
+						new StopShooterTask(shooter),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.LOAD, tilt)
+				));
+		gamepad1H.bButton()
+				.rising(new ParallelTaskBundle(
+						new InstantTask(() -> {intake.setIntakePower(0);}),
+						new StopShooterTask(shooter)
 				));
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
@@ -65,5 +73,6 @@ public class DriveOpMode extends SequoiaOpMode {
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper));
 		gamepad1H.rightButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper));
+		gamepad1H.leftBumperButton().onPress(new ResetTiltTask(tilt));
 	}
 }

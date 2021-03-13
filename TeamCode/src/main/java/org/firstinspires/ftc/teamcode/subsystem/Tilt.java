@@ -38,13 +38,26 @@ public class Tilt extends Subsystem {
 		tilt.setTargetPosition(Range.clip(desiredPosition, MIN_POSITION, MAX_POSITION));
 	}
 
+	public void runToZero() {
+		tilt.setDirection(DcMotorSimple.Direction.REVERSE);
+		tilt.setPower(-0.2);
+		tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+	}
+
+	public void reset() {
+		tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		offset = tilt.getCurrentPosition();
+		tilt.setTargetPosition(offset);
+		tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		tilt.setPower(RUN_POWER);
+	}
+
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		tilt = hardwareMap.get(DcMotorEx.class, "tilt");
 		tilt.setDirection(DcMotorSimple.Direction.REVERSE);
 		tilt.setPower(-0.2);
 		tilt.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
 	}
 
 	@Override
@@ -53,11 +66,7 @@ public class Tilt extends Subsystem {
 
 	@Override
 	public void start() {
-		tilt.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		offset = tilt.getCurrentPosition();
-		tilt.setTargetPosition(offset);
-		tilt.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-		tilt.setPower(RUN_POWER);
+		reset();
 	}
 
 	@Override

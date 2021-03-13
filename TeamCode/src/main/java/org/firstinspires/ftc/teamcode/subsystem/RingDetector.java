@@ -41,7 +41,7 @@ public class RingDetector extends Subsystem {
 	protected static float rectHeight = 0.3f / 8f; //0.2f/8f;
 	protected static float rectWidth = 1.2f / 8f; //0.84f/8f;
 
-	protected static float offsetX = 2.2f / 8f;//changing this moves the two rects and the two circles left or right, range : (-2, 2) not inclusive
+	protected static float offsetX = 3.5f / 8f;//changing this moves the two rects and the two circles left or right, range : (-2, 2) not inclusive
 	protected static float offsetY = 1.3f / 8f; // move down 0f/8f;//changing this moves the two rects and circles up or down, range: (-4, 4) not inclusive
 	//moves all rectangles right or left by amount. units are in ratio to monitor
 	protected static float[] bottomPos = {4f / 8f + offsetX, 2.6f / 8f + offsetY};//0 = col, 1 = row
@@ -107,7 +107,7 @@ public class RingDetector extends Subsystem {
 			RAW_IMAGE,//displays raw view
 		}
 
-		private Stage stageToRenderToViewport = Stage.THRESHOLD;
+		private Stage stageToRenderToViewport = Stage.detection;
 		private Stage[] stages = Stage.values();
 
 		Mat yCbCrChan2Mat = new Mat(); //the popular JPEG image format
