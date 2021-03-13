@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.AxesSigns;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.DashboardUtil;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.LynxModuleUtil;
@@ -51,6 +53,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MAX_ACCEL;
 import static org.firstinspires.ftc.teamcode.subsystem.DriveConstants.MAX_ANG_ACCEL;
@@ -111,6 +114,7 @@ public class DriveTrainMecanum extends MecanumDrive {
 	private DoubleSupplier xPower;
 	private DoubleSupplier yPower;
 	private DoubleSupplier headingPower;
+	private TwoWheelLocalizer twoWheelLocalizer;
 
 	private Mode mode;
 	private MotionProfile turnProfile;
@@ -192,7 +196,12 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		// TODO: if desired, use setLocalizer() to change the localization method
 		// for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
-		setLocalizer(new TwoWheelLocalizer(hardwareMap, this::getRawExternalHeading));
+		twoWheelLocalizer = new TwoWheelLocalizer(hardwareMap, this::getRawExternalHeading);
+		setLocalizer(twoWheelLocalizer);
+	}
+
+	public Supplier<Position> getPositionSupplier() {
+		return twoWheelLocalizer.getPositionSupplier();
 	}
 
 	public void setDriveDST() {

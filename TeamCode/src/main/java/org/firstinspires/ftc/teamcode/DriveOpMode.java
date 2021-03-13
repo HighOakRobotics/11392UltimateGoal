@@ -10,20 +10,26 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
+import org.firstinspires.ftc.teamcode.subsystem.Shimmier;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.LiftControlTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
 import org.firstinspires.ftc.teamcode.task.ResetTiltTask;
+import org.firstinspires.ftc.teamcode.task.ShimmyTask;
 import org.firstinspires.ftc.teamcode.task.StartShooterTask;
 import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
+import java.util.function.Supplier;
+
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
+	Shimmier shimmier = new Shimmier();
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
 	Loader loader = new Loader();
@@ -31,7 +37,7 @@ public class DriveOpMode extends SequoiaOpMode {
 	Lift lift = new Lift();
 	WobbleGripper gripper = new WobbleGripper();
 	Mecanum drivetrain = new Mecanum();
-	//OdometrySensor odometry = new OdometrySensor();
+	Supplier<Position> positionSupplier = drivetrain.mecanum().getPositionSupplier();
 
 	@Override
 	public void initTriggers() {
@@ -74,5 +80,6 @@ public class DriveOpMode extends SequoiaOpMode {
 		gamepad1H.rightButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper));
 		gamepad1H.leftBumperButton().onPress(new ResetTiltTask(tilt));
+		gamepad2H.aButton().rising(new ShimmyTask(shimmier));
 	}
 }

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystem;
+package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
@@ -52,5 +52,12 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 
 	public static double encoderTicksToInches(double ticks) {
 		return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV;
+	}
+
+	public Supplier<Position> getPositionSupplier() {
+		return () -> {
+			Pose2d estimate = getPoseEstimate();
+			return new Position(estimate.getX(), estimate.getY(), estimate.getHeading());
+		};
 	}
 }
