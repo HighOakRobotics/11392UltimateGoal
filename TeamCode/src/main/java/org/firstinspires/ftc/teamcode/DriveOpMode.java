@@ -50,22 +50,23 @@ public class DriveOpMode extends SequoiaOpMode {
 		gamepad1H.rightTriggerButton(0.05).whilePressed(new LiftControlTask(50, lift));
 		gamepad1H.leftTriggerButton(0.05).whilePressed(new LiftControlTask(-50, lift));
 		gamepad1H.aButton()
-				.rising(new ParallelTaskBundle(
+				.onPress(new ParallelTaskBundle(
 						new InstantTask(() -> {intake.setIntakePower(0);}),
 						new StartShooterTask(shooter),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.SHOOT, tilt)
 				));
-		gamepad1H.yButton().onPressWithCancel(new InstantTask(() -> {
+		gamepad1H.yButton()
+				.onPressWithCancel(new InstantTask(() -> {
 			intake.setIntakePower(1.0);
 		}));
 		gamepad1H.xButton()
-				.rising(new ParallelTaskBundle(
+				.onPress(new ParallelTaskBundle(
 						new InstantTask(() -> {intake.setIntakePower(-0.7);}),
 						new StopShooterTask(shooter),
 						new TiltModeSelectTask(TiltModeSelectTask.Position.LOAD, tilt)
 				));
 		gamepad1H.bButton()
-				.rising(new ParallelTaskBundle(
+				.onPress(new ParallelTaskBundle(
 						new InstantTask(() -> {intake.setIntakePower(0);}),
 						new StopShooterTask(shooter)
 				));
@@ -73,13 +74,13 @@ public class DriveOpMode extends SequoiaOpMode {
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
 		gamepad1H.rightBumperButton()
 				.onRelease(new LoaderPushTask(loader));
-		//gamepad1H.leftBumperButton()
-		//		.onPress(new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt));
 		gamepad1H.leftButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper));
 		gamepad1H.rightButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper));
-		gamepad1H.leftBumperButton().onPress(new ResetTiltTask(tilt));
-		gamepad2H.aButton().rising(new ShimmyTask(shimmier));
+		gamepad1H.leftBumperButton()
+				.onPress(new ResetTiltTask(tilt));
+		gamepad2H.aButton()
+				.onPress(new ShimmyTask(shimmier));
 	}
 }
