@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class IMUSensor extends PositioningSensor {
@@ -31,6 +32,11 @@ public class IMUSensor extends PositioningSensor {
 	@Override
 	public Supplier<Position> getPositionSupplier() {
 		return () -> position;
+	}
+
+	@Override
+	public Consumer<Position> getPositionReset() {
+		return null;
 	}
 
 	@Override

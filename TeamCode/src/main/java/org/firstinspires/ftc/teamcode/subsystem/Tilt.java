@@ -11,7 +11,7 @@ public class Tilt extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
 	private static final int MAX_POSITION = 500;
-	private static final double RUN_POWER = 0.9;
+	private static final double RUN_POWER = 0.9; //0.9
 	public int offset = 0;
 	public int targetPosition = 0;
 	private DcMotorEx tilt;

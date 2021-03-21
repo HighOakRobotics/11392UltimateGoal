@@ -9,6 +9,7 @@ import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FusionSensor extends PositioningSensor {
@@ -19,6 +20,11 @@ public class FusionSensor extends PositioningSensor {
 	@Override
 	public Supplier<Position> getPositionSupplier() {
 		return null;
+	}
+
+	@Override
+	public Consumer<Position> getPositionReset() {
+		return (Position pos) -> {};
 	}
 
 	@Override

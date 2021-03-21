@@ -12,13 +12,12 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackable;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackableDefaultListener;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaTrackables;
-import org.firstinspires.ftc.teamcode.R;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.firstinspires.ftc.robotcore.external.navigation.AngleUnit.DEGREES;
@@ -53,6 +52,11 @@ public class VuforiaSensor extends PositioningSensor {
 	@Override
 	public Supplier<Position> getPositionSupplier() {
 		return () -> position;
+	}
+
+	@Override
+	public Consumer<Position> getPositionReset() {
+		return (Position pos) -> {};
 	}
 
 	public void update() {
