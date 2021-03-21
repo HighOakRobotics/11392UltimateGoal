@@ -15,6 +15,8 @@ import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.VSLAMSensor;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.LiftControlTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
@@ -25,8 +27,6 @@ import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
-import java.util.function.Supplier;
-
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
 	Shimmier shimmier = new Shimmier();
@@ -36,12 +36,25 @@ public class DriveOpMode extends SequoiaOpMode {
 	Tilt tilt = new Tilt();
 	Lift lift = new Lift();
 	WobbleGripper gripper = new WobbleGripper();
+	VSLAMSensor vslam = new VSLAMSensor();
 	Mecanum drivetrain = new Mecanum();
-	Supplier<Position> positionSupplier = drivetrain.mecanum().getPositionSupplier();
+	//Supplier<Position> positionSupplier = drivetrain.mecanum().getPositionSupplier();
 
 	@Override
 	public void initTriggers() {
-
+		try {
+			vslam.getPositionReset()
+					.accept(new Position(
+							Double.parseDouble(scheduler.getPersistentData("x")),
+							Double.parseDouble(scheduler.getPersistentData("y")),
+							Double.parseDouble(scheduler.getPersistentData("rot"))
+					));
+		} catch (IllegalArgumentException e) {
+			telemetry.log().add("was unable to fetch persistent pose... using 0,0,0");
+		}
+		drivetrain.mecanum().setLocalizer(
+				new PositionLocalizer(vslam.getPositionSupplier(), vslam.getPositionReset())
+		);
 	}
 
 	@Override

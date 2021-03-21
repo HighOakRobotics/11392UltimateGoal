@@ -19,6 +19,8 @@ import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.VSLAMSensor;
 import org.firstinspires.ftc.teamcode.task.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
 import org.firstinspires.ftc.teamcode.task.RingDetectTask;
@@ -37,6 +39,7 @@ import java.util.function.Supplier;
 public class AutoOpModeV2 extends SequoiaOpMode {
 	private final Lift lift = new Lift();
 	private final Tilt tilt = new Tilt();
+	private final VSLAMSensor vslam = new VSLAMSensor();
 	private final Mecanum mecanum = new Mecanum();
 	private final WobbleGripper gripper = new WobbleGripper();
 	private final Shooter shooter = new Shooter();
@@ -70,6 +73,9 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 
 	@Override
 	public void initTriggers() {
+		mecanum.mecanum().setLocalizer(
+				new PositionLocalizer(vslam.getPositionSupplier(), vslam.getPositionReset())
+		);
 		Scheduler.getInstance().schedule(new RingDetectTask(ringDetector));
 		mecanum.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
 	}
@@ -94,7 +100,13 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 				//shootRings(3),
 				new ConditionalTask(followConstantTrajectory(() -> new Vector2d(10, -42)),
 						new InstantTask(() -> {}), () -> rings != 0),
-				new InstantTask(this::requestOpModeStop)
+				new InstantTask(() -> {
+					Pose2d pose = mecanum.mecanum().getPoseEstimate();
+					scheduler.putPersistentData("x", Double.toString(pose.getX()));
+					scheduler.putPersistentData("y", Double.toString(pose.getY()));
+					scheduler.putPersistentData("rot", Double.toString(pose.getHeading()));
+					requestOpModeStop();
+				})
 		));
 	}
 

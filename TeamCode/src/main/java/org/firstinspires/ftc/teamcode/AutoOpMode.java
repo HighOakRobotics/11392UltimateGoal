@@ -144,7 +144,13 @@ public class AutoOpMode extends SequoiaOpMode {
 								.lineToConstantHeading(new Vector2d(10, -42))
 								.build()
 				),
-				new InstantTask(this::requestOpModeStop)
+				new InstantTask(() -> {
+					Pose2d pose = mecanum.mecanum().getPoseEstimate();
+					scheduler.putPersistentData("x", Double.toString(pose.getX()));
+					scheduler.putPersistentData("y", Double.toString(pose.getY()));
+					scheduler.putPersistentData("rot", Double.toString(pose.getHeading()));
+					requestOpModeStop();
+				})
 		));
 	}
 

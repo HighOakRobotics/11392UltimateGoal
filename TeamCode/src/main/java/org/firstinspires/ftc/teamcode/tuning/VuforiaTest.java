@@ -37,8 +37,8 @@ public class VuforiaTest extends SequoiaOpMode {
 
 			Position pos = posSupplier.get();
 
-			double x = pos.getxPosition() != null ? pos.getxPosition() : -1000;
-			double y = pos.getyPosition() != null ? pos.getyPosition() : -1000;
+			double x = pos.getX() != null ? pos.getX() : -1000;
+			double y = pos.getY() != null ? pos.getY() : -1000;
 			double heading = pos.getHeading() != null ? pos.getHeading() : -1000;
 			DashboardUtil.drawRobot(packet.fieldOverlay(), new Pose2d(x, y, heading));
 			packet.put("x", x);
