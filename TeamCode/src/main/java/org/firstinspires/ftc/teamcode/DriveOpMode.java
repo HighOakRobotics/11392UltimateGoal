@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.ParallelTaskBundle;
+import com.ftc11392.sequoia.task.SequentialTaskBundle;
+import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -26,6 +28,8 @@ import org.firstinspires.ftc.teamcode.task.StartShooterTask;
 import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
+
+import java.util.concurrent.TimeUnit;
 
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
@@ -66,7 +70,11 @@ public class DriveOpMode extends SequoiaOpMode {
 				.onPress(new ParallelTaskBundle(
 						new InstantTask(() -> {intake.setIntakePower(0);}),
 						new StartShooterTask(shooter),
-						new TiltModeSelectTask(TiltModeSelectTask.Position.SHOOT, tilt)
+						new SequentialTaskBundle(
+								new TiltModeSelectTask(TiltModeSelectTask.Position.SHAKE, tilt),
+								new WaitTask(1000, TimeUnit.MILLISECONDS),
+								new TiltModeSelectTask(TiltModeSelectTask.Position.SHOOT, tilt)
+						)
 				));
 		gamepad1H.yButton()
 				.onPressWithCancel(new InstantTask(() -> {

@@ -15,7 +15,7 @@ public class TiltModeSelectTask extends InstantTask {
 		LOAD(180),
 		SHOOT(275),
 		POWERSHOT(300),
-		SHAKE(480);
+		SHAKE(725);
 
 		Position(int pos) {
 			position = pos;
