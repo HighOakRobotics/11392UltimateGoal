@@ -39,9 +39,9 @@ import java.util.function.Supplier;
 public class AutoOpModeV2 extends SequoiaOpMode {
 	private final Lift lift = new Lift();
 	private final Tilt tilt = new Tilt();
-	private final VSLAMSensor vslam = new VSLAMSensor();
+	//private final VSLAMSensor vslam = new VSLAMSensor();
 	private final Mecanum mecanum = new Mecanum();
-	private final WobbleGripper gripper = new WobbleGripper();
+	//private final WobbleGripper gripper = new WobbleGripper();
 	private final Shooter shooter = new Shooter();
 	private final Loader loader = new Loader();
 	private final RingDetector ringDetector = new RingDetector();
@@ -73,9 +73,11 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 
 	@Override
 	public void initTriggers() {
+		/*
 		mecanum.mecanum().setLocalizer(
 				new PositionLocalizer(vslam.getPositionSupplier(), vslam.getPositionReset())
 		);
+		*/
 		Scheduler.getInstance().schedule(new RingDetectTask(ringDetector));
 		mecanum.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
 	}
@@ -156,14 +158,14 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 
 	private SequentialTaskBundle openGripper() {
 		return new SequentialTaskBundle (
-				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
+				//new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS)
 		);
 	}
 
 	private SequentialTaskBundle closeGripper() {
 		return new SequentialTaskBundle (
-				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper),
+				//new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.CLOSE, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS)
 		);
 	}
