@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
 import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.VSLAMSensor;
 import org.firstinspires.ftc.teamcode.task.FollowTrajectoryTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
@@ -78,6 +79,7 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 				new PositionLocalizer(vslam.getPositionSupplier(), vslam.getPositionReset())
 		);
 		*/
+		mecanum.mecanum().setLocalizer(new TwoWheelLocalizer(hardwareMap, () -> mecanum.mecanum().getRawExternalHeading()));
 		Scheduler.getInstance().schedule(new RingDetectTask(ringDetector));
 		mecanum.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
 	}
