@@ -15,15 +15,14 @@ public class Blockers extends Subsystem {
 
 	public void close() {
 		blockerLeft.setPosition(0);
-		blockerRight.setPosition(1);
+		blockerRight.setPosition(0.9);
 	}
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		blockerLeft = hardwareMap.get(Servo.class, "blockerLeft");
 		blockerRight = hardwareMap.get(Servo.class, "blockerRight");
-		blockerLeft.setPosition(1);
-		blockerRight.setPosition(0);
+		close();
 	}
 
 	@Override

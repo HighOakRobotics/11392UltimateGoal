@@ -10,7 +10,7 @@ public class WobbleArm extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
 	private static final int MAX_POSITION = 1150;
-	private static final double RUN_POWER = 0.0;
+	private static final double RUN_POWER = 1.0;
 	public int offset = 0;
 	public int targetPosition = 0;
 	private DcMotorEx armMotor;

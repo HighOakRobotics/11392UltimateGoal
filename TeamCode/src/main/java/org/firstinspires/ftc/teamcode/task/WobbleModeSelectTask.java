@@ -12,9 +12,9 @@ public class WobbleModeSelectTask extends InstantTask {
 
 	public enum Position {
 		INIT(0),
-		START(20),
-		HOLD(30),
-		GRAB(40);
+		START(220),
+		HOLD(500),
+		GRAB(1090);
 
 		Position(int pos) {
 			position = pos;

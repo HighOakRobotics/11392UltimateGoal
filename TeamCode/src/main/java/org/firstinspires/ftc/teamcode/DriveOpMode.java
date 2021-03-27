@@ -21,16 +21,17 @@ import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.VSLAMSensor;
-import org.firstinspires.ftc.teamcode.task.PointControlTask;
+import org.firstinspires.ftc.teamcode.task.BlockerManagmentTask;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
-import org.firstinspires.ftc.teamcode.task.LiftControlTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
+import org.firstinspires.ftc.teamcode.task.PointControlTask;
 import org.firstinspires.ftc.teamcode.task.ResetTiltTask;
 import org.firstinspires.ftc.teamcode.task.ShakeTask;
 import org.firstinspires.ftc.teamcode.task.StartShooterTask;
 import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
+import org.firstinspires.ftc.teamcode.task.WobbleModeSelectTask;
 
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
@@ -79,9 +80,11 @@ public class DriveOpMode extends SequoiaOpMode {
 
 	@Override
 	public void runTriggers() {
+		scheduler.schedule(new BlockerManagmentTask(blockers, fuse.getPositionSupplier()));
+		scheduler.schedule(new WobbleModeSelectTask(WobbleModeSelectTask.Position.START, wobbleArm));
 		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-		gamepad1H.rightTriggerButton(0.05).whilePressed(new LiftControlTask(50, wobbleArm));
-		gamepad1H.leftTriggerButton(0.05).whilePressed(new LiftControlTask(-50, wobbleArm));
+		gamepad1H.rightTriggerButton(0.05).onPress(new WobbleModeSelectTask(WobbleModeSelectTask.Position.GRAB, wobbleArm));
+		gamepad1H.leftTriggerButton(0.05).onPress(new WobbleModeSelectTask(WobbleModeSelectTask.Position.HOLD, wobbleArm));
 		gamepad1H.aButton()
 				.onPress(new ParallelTaskBundle(
 						new InstantTask(() -> {intake.setIntakePower(0);}),
