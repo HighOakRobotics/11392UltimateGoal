@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.localization.Localizer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -14,24 +15,31 @@ import java.util.function.Supplier;
  * instead of just odometry data.
  */
 public class PositionLocalizer implements Localizer {
-	Supplier<Position> fusionSupplier;
+	Supplier<Position> positionSupplier;
+	Consumer<Position> positionReset;
 	Pose2d pose;
 
-	public PositionLocalizer(Supplier<Position> fusionSupplier) {
-		this.fusionSupplier = fusionSupplier;
+	public PositionLocalizer(Supplier<Position> positionSupplier, Consumer<Position> positionReset) {
+		this.positionSupplier = positionSupplier;
+		this.positionReset = positionReset;
+	}
+
+	public PositionLocalizer(Supplier<Position> positionSupplier) {
+		this(positionSupplier, (Position pos) -> {
+			throw new UnsupportedOperationException("This sensor adaptor does not support resets.");
+		});
 	}
 
 	@NotNull
 	@Override
 	public Pose2d getPoseEstimate() {
-		Position position = fusionSupplier.get();
-		return new Pose2d(new Vector2d(position.getxPosition(), position.getyPosition()), position.getHeading());
+		Position position = this.positionSupplier.get();
+		return new Pose2d(new Vector2d(position.getX(), position.getY()), position.getHeading());
 	}
 
 	@Override
 	public void setPoseEstimate(@NotNull Pose2d pose2d) {
-		// TODO check if this actually makes sense for road runner
-		throw new UnsupportedOperationException("FusionLocalizer should not have its pose set.");
+		positionReset.accept(new Position(pose2d.getX(), pose2d.getY(), pose2d.getHeading()));
 	}
 
 	@Nullable

@@ -1,85 +1,54 @@
 package org.firstinspires.ftc.teamcode.subsystem.positioning;
 
+import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.apache.commons.math3.filter.KalmanFilter;
-import org.apache.commons.math3.filter.MeasurementModel;
-import org.apache.commons.math3.filter.ProcessModel;
-import org.apache.commons.math3.linear.MatrixUtils;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
-
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class FusionSensor extends PositioningSensor {
 
-	KalmanFilter filter;
-	Double output;
+	VSLAMSensor vslam;
+	OdometrySensor odo;
 
-	@Override
-	public Supplier<Position> getPositionSupplier() {
-		return null;
+	public FusionSensor(VSLAMSensor vslam, OdometrySensor odo) {
+		this.vslam = vslam;
+		this.odo = odo;
 	}
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
-		filter = new KalmanFilter(new ProcessModel() {
-			@Override
-			public RealMatrix getStateTransitionMatrix() {
-				return MatrixUtils.createRealMatrix(new double[][]{
-						{1.0, 0.0, 0.0},
-						{0.0, 1.0, 0.0},
-						{0.0, 0.0, 1.0}
-				});
-			}
-
-			@Override
-			public RealMatrix getControlMatrix() {
-				return null;
-			}
-
-			@Override
-			public RealMatrix getProcessNoise() {
-				return null;
-			}
-
-			@Override
-			public RealVector getInitialStateEstimate() {
-				return null;
-			}
-
-			@Override
-			public RealMatrix getInitialErrorCovariance() {
-				return null;
-			}
-		}, new MeasurementModel() {
-			@Override
-			public RealMatrix getMeasurementMatrix() {
-				return null;
-			}
-
-			@Override
-			public RealMatrix getMeasurementNoise() {
-				return null;
-			}
-		});
-		output = 0.0;
-		priority = 10;
-	}
-
-	public void update() {
-		filter.predict();
-		filter.correct(MatrixUtils.createRealVector(new double[]{}));
-		output = filter.getStateEstimation()[0];
+		telemetry.log().add("vslam odo application position x:" + vslam.getPositionSupplier().get().getX());
+		odo.getPositionReset().accept(vslam.getPositionSupplier().get());
 	}
 
 	@Override
 	public void initPeriodic() {
-		update();
+		runPeriodic();
 	}
 
 	@Override
 	public void runPeriodic() {
-		update();
+		Pose2d vels = odo.getVelocity();
+		if (vels!=null) {
+			telemetry.addData("odovels", "exists");
+			vslam.getT265Camera().sendOdometry(vels.getX()*0.0254, vels.getY()*0.0254);
+		} else {
+			telemetry.addData("odovels", "do not exist");
+		}
+
+	}
+
+	@Override
+	public Supplier<Position> getPositionSupplier() {
+		return vslam.getPositionSupplier();
+	}
+
+	@Override
+	public Consumer<Position> getPositionReset() {
+		return (Position pos) -> {
+			odo.getPositionReset().accept(pos);
+			vslam.getPositionReset().accept(pos);
+		};
 	}
 }

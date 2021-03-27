@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem.positioning;
 import com.ftc11392.sequoia.subsystem.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public abstract class PositioningSensor extends Subsystem {
@@ -17,6 +18,8 @@ public abstract class PositioningSensor extends Subsystem {
 	}
 
 	public abstract Supplier<Position> getPositionSupplier();
+
+	public abstract Consumer<Position> getPositionReset();
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {

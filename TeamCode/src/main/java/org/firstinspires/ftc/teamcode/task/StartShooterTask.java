@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 public class StartShooterTask extends InstantTask {
 
 	public StartShooterTask(Shooter shooter) {
-		super(() -> shooter.setDesiredFlywheelVelocity(1500));
+		super(() -> shooter.setDesiredFlywheelVelocity(2000));
 	}
 }
 

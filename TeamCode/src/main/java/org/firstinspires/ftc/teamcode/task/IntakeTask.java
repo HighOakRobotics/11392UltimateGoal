@@ -15,12 +15,12 @@ public class IntakeTask extends Task {
 
 	@Override
 	public void init() {
-		intake.setIntakePower(-0.7);
+		intake.setIntakePower(-1);
 	}
 
 	@Override
 	public void loop() {
-		intake.setIntakePower(-0.7);
+		intake.setIntakePower(-1);
 	}
 
 	@Override

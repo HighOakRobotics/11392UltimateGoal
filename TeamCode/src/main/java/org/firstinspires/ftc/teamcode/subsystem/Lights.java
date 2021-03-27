@@ -11,6 +11,7 @@ public class Lights extends Subsystem {
     RevBlinkinLedDriver.BlinkinPattern patternPlay = RevBlinkinLedDriver.BlinkinPattern.SHOT_BLUE;
     RevBlinkinLedDriver.BlinkinPattern patternEnd = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
     RevBlinkinLedDriver.BlinkinPattern finalTen = RevBlinkinLedDriver.BlinkinPattern.SHOT_WHITE;
+    RevBlinkinLedDriver.BlinkinPattern ocean = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_OCEAN_PALETTE;
 
     public void endGame() {
         blinkinLedDriver.setPattern(patternEnd);
@@ -19,6 +20,8 @@ public class Lights extends Subsystem {
     public void finalTen() {
         blinkinLedDriver.setPattern(finalTen);
     }
+
+    public void ocean() {blinkinLedDriver.setPattern(ocean);}
 
     @Override
     public void initialize(HardwareMap hardwareMap) {

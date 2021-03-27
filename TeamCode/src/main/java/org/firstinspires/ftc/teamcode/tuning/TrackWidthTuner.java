@@ -11,7 +11,6 @@ import com.qualcomm.robotcore.util.MovingStatistics;
 
 import org.firstinspires.ftc.robotcore.internal.system.Misc;
 import org.firstinspires.ftc.teamcode.subsystem.DriveConstants;
-import org.firstinspires.ftc.teamcode.subsystem.DriveConstants;
 import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
 
 /*
@@ -25,6 +24,7 @@ import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
  */
 
 @Autonomous(group = "drive")
+@Disabled
 public class TrackWidthTuner extends LinearOpMode {
 	public static double ANGLE = 180; // deg
 	public static int NUM_TRIALS = 5;

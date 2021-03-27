@@ -12,22 +12,26 @@ public class LoaderPushTask extends Task {
 
 	public LoaderPushTask(Loader loader) {
 		this.loader = loader;
+		this.clock = new Clock();
 	}
 
 	@Override
 	public void init() {
-		loader.setLoaderState(Loader.LoaderState.OPEN);
+		loader.setLoaderState(Loader.LoaderState.CLOSED);
+		clock.startTiming();
 		this.running = true;
 	}
 
 	@Override
 	public void loop() {
-
+		if(clock.getMillis() > 300) {
+			this.running = false;
+		}
 	}
 
 	@Override
 	public void stop(boolean interrupted) {
-		running = false;
-		loader.setLoaderState(Loader.LoaderState.CLOSED);
+
+		loader.setLoaderState(Loader.LoaderState.OPEN);
 	}
 }

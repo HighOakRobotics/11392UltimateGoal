@@ -5,7 +5,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
-import com.ftc11392.sequoia.task.RunTask;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.subsystem.roadrunner.DashboardUtil;
 import java.util.function.Supplier;
 
 @TeleOp
+@Disabled
 public class VuforiaTest extends SequoiaOpMode {
 
 	VuforiaSensor sensor = new VuforiaSensor();
@@ -36,8 +37,8 @@ public class VuforiaTest extends SequoiaOpMode {
 
 			Position pos = posSupplier.get();
 
-			double x = pos.getxPosition() != null ? pos.getxPosition() : -1000;
-			double y = pos.getyPosition() != null ? pos.getyPosition() : -1000;
+			double x = pos.getX() != null ? pos.getX() : -1000;
+			double y = pos.getY() != null ? pos.getY() : -1000;
 			double heading = pos.getHeading() != null ? pos.getHeading() : -1000;
 			DashboardUtil.drawRobot(packet.fieldOverlay(), new Pose2d(x, y, heading));
 			packet.put("x", x);

@@ -10,8 +10,9 @@ import com.ftc11392.sequoia.task.SwitchTask;
 import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.subsystem.WobbleArm;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
@@ -30,9 +31,9 @@ import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 @Autonomous(name = "AutoOpMode 11392", group = "11392", preselectTeleOp = "DriveOpMode 11392")
-//@Disabled
+@Disabled
 public class AutoOpMode extends SequoiaOpMode {
-	private final Lift lift = new Lift();
+	private final WobbleArm wobbleArm = new WobbleArm();
 	private final Tilt tilt = new Tilt();
 	private final Mecanum mecanum = new Mecanum();
 	private final WobbleGripper gripper = new WobbleGripper();
@@ -53,7 +54,7 @@ public class AutoOpMode extends SequoiaOpMode {
 		}));
 		put(1, new InstantTask(() -> {
 			boxX = 36;
-			boxY = -40;
+			boxY = -44;
 			boxHeading = Math.PI;
 		}));
 		put(4, new InstantTask(() -> {
@@ -84,7 +85,7 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX + 10, boxY, boxHeading)).build()
+								.lineToLinearHeading(new Pose2d(boxX, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
@@ -117,7 +118,7 @@ public class AutoOpMode extends SequoiaOpMode {
 				new FollowTrajectoryTask(
 						mecanum,
 						() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
-								.lineToLinearHeading(new Pose2d(boxX + 6, boxY, boxHeading)).build()
+								.lineToLinearHeading(new Pose2d(boxX - 6, boxY, boxHeading)).build()
 				),
 				new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper),
 				new WaitTask(500, TimeUnit.MILLISECONDS),
@@ -129,12 +130,12 @@ public class AutoOpMode extends SequoiaOpMode {
 								.lineToLinearHeading(new Pose2d(-6, -42, Math.PI))
 								.build()
 				),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(1000, TimeUnit.MILLISECONDS),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(1000, TimeUnit.MILLISECONDS),
-				new LoaderPushTask(loader).withTimeout(300, TimeUnit.MILLISECONDS),
-				new WaitTask(500, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
+				new LoaderPushTask(loader),
+				new WaitTask(400, TimeUnit.MILLISECONDS),
 				new StopShooterTask(shooter),
 				new TiltModeSelectTask(TiltModeSelectTask.Position.BASE, tilt),
 				new FollowTrajectoryTask(
@@ -143,7 +144,13 @@ public class AutoOpMode extends SequoiaOpMode {
 								.lineToConstantHeading(new Vector2d(10, -42))
 								.build()
 				),
-				new InstantTask(this::requestOpModeStop)
+				new InstantTask(() -> {
+					Pose2d pose = mecanum.mecanum().getPoseEstimate();
+					scheduler.putPersistentData("x", Double.toString(pose.getX()));
+					scheduler.putPersistentData("y", Double.toString(pose.getY()));
+					scheduler.putPersistentData("rot", Double.toString(pose.getHeading()));
+					requestOpModeStop();
+				})
 		));
 	}
 

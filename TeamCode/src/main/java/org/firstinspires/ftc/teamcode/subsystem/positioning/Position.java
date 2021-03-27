@@ -33,11 +33,11 @@ public class Position {
 		return time;
 	}
 
-	public Double getxPosition() {
+	public Double getX() {
 		return xPosition;
 	}
 
-	public Double getyPosition() {
+	public Double getY() {
 		return yPosition;
 	}
 
@@ -56,4 +56,6 @@ public class Position {
 	public boolean hasHeading() {
 		return hasHeading;
 	}
+
+	public boolean hasAll() {return hasX && hasY && hasHeading;}
 }

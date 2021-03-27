@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.teamcode.subsystem.DriveTrainMecanum;
-import org.firstinspires.ftc.teamcode.subsystem.positioning.StandardTrackingWheelLocalizer;
 
 /**
  * Opmode designed to assist the user in tuning the `StandardTrackingWheelLocalizer`'s
@@ -65,6 +64,7 @@ import org.firstinspires.ftc.teamcode.subsystem.positioning.StandardTrackingWhee
 
 @Config
 @TeleOp(group = "drive")
+@Disabled
 public class TrackingWheelLateralDistanceTuner extends LinearOpMode {
 	public static int NUM_TURNS = 10;
 

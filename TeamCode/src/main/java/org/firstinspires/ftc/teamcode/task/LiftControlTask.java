@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.task;
 
 import com.ftc11392.sequoia.task.InstantTask;
-import com.ftc11392.sequoia.util.Clock;
 
-import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.subsystem.WobbleArm;
 
 public class LiftControlTask extends InstantTask {
-	public LiftControlTask(int adjustment, Lift lift) {
+	public LiftControlTask(int adjustment, WobbleArm wobbleArm) {
 		super(() -> {
-			lift.modifyTarget(adjustment);
+			wobbleArm.modifyTarget(adjustment);
 		});
 	}
 }

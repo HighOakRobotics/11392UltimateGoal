@@ -41,7 +41,7 @@ public class RingDetector extends Subsystem {
 	protected static float rectHeight = 0.3f / 8f; //0.2f/8f;
 	protected static float rectWidth = 1.2f / 8f; //0.84f/8f;
 
-	protected static float offsetX = -1.75f / 8f;//changing this moves the two rects and the two circles left or right, range : (-2, 2) not inclusive
+	protected static float offsetX = 3.5f / 8f;//changing this moves the two rects and the two circles left or right, range : (-2, 2) not inclusive
 	protected static float offsetY = 1.3f / 8f; // move down 0f/8f;//changing this moves the two rects and circles up or down, range: (-4, 4) not inclusive
 	//moves all rectangles right or left by amount. units are in ratio to monitor
 	protected static float[] bottomPos = {4f / 8f + offsetX, 2.6f / 8f + offsetY};//0 = col, 1 = row
@@ -133,10 +133,6 @@ public class RingDetector extends Subsystem {
 		@Override
 		public Mat processFrame(Mat input) {
 			contoursList.clear();
-			/*
-			 * This pipeline finds the contours of yellow blobs such as the Gold Mineral
-			 * from the Rover Ruckus game.
-			 */
 
 			//color diff cb.
 			//lower cb = more blue = skystone = white
@@ -145,7 +141,7 @@ public class RingDetector extends Subsystem {
 			Core.extractChannel(yCbCrChan2Mat, yCbCrChan2Mat, 2);//takes cb difference and stores
 
 			//b&w
-			Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 102, 255, Imgproc.THRESH_BINARY_INV);
+			Imgproc.threshold(yCbCrChan2Mat, thresholdMat, 110, 255, Imgproc.THRESH_BINARY_INV);
 
 			//outline/contour
 			Imgproc.findContours(thresholdMat, contoursList, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
