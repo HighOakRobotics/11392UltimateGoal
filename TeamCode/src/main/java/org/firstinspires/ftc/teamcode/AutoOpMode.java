@@ -12,7 +12,7 @@ import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
-import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.subsystem.WobbleArm;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Autonomous(name = "AutoOpMode 11392", group = "11392", preselectTeleOp = "DriveOpMode 11392")
 @Disabled
 public class AutoOpMode extends SequoiaOpMode {
-	private final Lift lift = new Lift();
+	private final WobbleArm wobbleArm = new WobbleArm();
 	private final Tilt tilt = new Tilt();
 	private final Mecanum mecanum = new Mecanum();
 	private final WobbleGripper gripper = new WobbleGripper();

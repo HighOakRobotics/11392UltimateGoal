@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class VSLAMSensor extends PositioningSensor {
 
-	private static T265Camera slamra = null;
+	private static T265Camera t265Camera = null;
 
 	private Position initial;
 	private boolean selfUpdate;
@@ -30,6 +30,10 @@ public class VSLAMSensor extends PositioningSensor {
 		this(new Position(0.0,0.0,0.0));
 	}
 
+	public T265Camera getT265Camera() {
+		return t265Camera;
+	}
+
 	@Override
 	public Supplier<Position> getPositionSupplier() {
 		return this::update;
@@ -38,8 +42,11 @@ public class VSLAMSensor extends PositioningSensor {
 	@Override
 	public Consumer<Position> getPositionReset() {
 		return (Position pos) -> {
+			telemetry.log().add("reset VSLAM position");
 			if (pos.hasAll()) {
-				slamra.setPose(new Pose2d(pos.getX(), pos.getY(), new Rotation2d(pos.getHeading())));
+				t265Camera.stop();
+				t265Camera.start();
+				t265Camera.setPose(new Pose2d(pos.getX()*0.0254, pos.getY()*0.0254, new Rotation2d(pos.getHeading()).plus(new Rotation2d(Math.PI))));
 			} else {
 				throw new IllegalArgumentException("Position reset must contain all fields for this sensor,");
 			}
@@ -47,7 +54,7 @@ public class VSLAMSensor extends PositioningSensor {
 	}
 
 	private Position update() {
-		T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
+		T265Camera.CameraUpdate up = t265Camera.getLastReceivedCameraUpdate();
 		if (up == null) {
 			return new Position(null,null,null);
 		}
@@ -62,29 +69,31 @@ public class VSLAMSensor extends PositioningSensor {
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		priority = 0; // Probably not necessary
-		if (slamra == null) {
-			slamra = new T265Camera(new Transform2d(), 0.1, hardwareMap.appContext);
+		if (t265Camera == null) {
+			t265Camera = new T265Camera(
+					new Transform2d(new Translation2d(-8*0.0254,-5.5*0.0254 ), new Rotation2d(Math.PI)),
+					0.05, hardwareMap.appContext);
 		}
+		t265Camera.start();
 	}
 
 	@Override
-	public void start() {
-		slamra.start();
-		slamra.setPose(new Pose2d(0,0,new Rotation2d()));
+	public void initPeriodic() {
+		runPeriodic();
 	}
 
 	@Override
 	public void runPeriodic() {
-		if (selfUpdate) {
+		//if (selfUpdate) {
 			Position curPos = update();
-			if (curPos.hasX()) telemetry.addData("x", curPos.getX());
-			if (curPos.hasY()) telemetry.addData("y", curPos.getY());
-			if (curPos.hasHeading()) telemetry.addData("r", curPos.getHeading());
-		}
+			if (curPos.hasX()) telemetry.addData("slamx", curPos.getX());
+			if (curPos.hasY()) telemetry.addData("slamy", curPos.getY());
+			if (curPos.hasHeading()) telemetry.addData("slamr", curPos.getHeading());
+		//}
 	}
 
 	@Override
 	public void stop() {
-		slamra.stop();
+		t265Camera.stop();
 	}
 }

@@ -36,17 +36,13 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.Position;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.AxesSigns;
+import org.firstinspires.ftc.teamcode.subsystem.roadrunner.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.DashboardUtil;
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.LynxModuleUtil;
-import org.firstinspires.ftc.teamcode.subsystem.roadrunner.BNO055IMUUtil;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -227,14 +223,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 		setMotorPowers(v, v1, v2, v3);
 	}
 
-	public void setDriveABS() {
-		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-		mode = Mode.DRIVE_ABS;
-	}
-
-	public void setDriveABS(DoubleSupplier drive, DoubleSupplier strafe, DoubleSupplier turn) {
-		Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-		currentAngle = AngleUnit.RADIANS.normalize(AngleUnit.RADIANS.fromUnit(angles.angleUnit, angles.firstAngle));
+	private void setMotorsABS() {
+		currentAngle = getPoseEstimate().getHeading();
 		currentAngle += Math.PI;
 		currentAngle *= -1;
 		currentAngle %= 2 * Math.PI;
@@ -242,19 +232,44 @@ public class DriveTrainMecanum extends MecanumDrive {
 			currentAngle -= 2 * Math.PI;
 		}
 
-		double x = Range.clip((strafe.getAsDouble() >= 0 ? 1 : -1) * Math.pow(strafe.getAsDouble(), 2), -1, 1);
-		double y = Range.clip((drive.getAsDouble() >= 0 ? 1 : -1) * Math.pow(drive.getAsDouble(), 2), -1, 1);
+		double x = Range.clip((yPower.getAsDouble() >= 0 ? 1 : -1) * Math.pow(yPower.getAsDouble(), 2), -1, 1);
+		double y = Range.clip((xPower.getAsDouble() >= 0 ? 1 : -1) * Math.pow(xPower.getAsDouble(), 2), -1, 1);
 		speed = Range.clip(Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)), -1, 1);
 		angle = Math.atan2(-x, y);
 
 		angle = angle - (currentAngle - driveAngleOffset);
 
-		this.turn = turn.getAsDouble();
+		this.turn = headingPower.getAsDouble();
 
 		angleRad = angle * (Math.PI / 180);
+
+		double frontLeft = (speed * Math.cos((Math.PI / 4.0) - angle)) - (turn);
+		double frontRight = (speed * Math.cos((Math.PI / 4.0) + angle)) + (turn);
+		double backLeft = (speed * Math.cos((Math.PI / 4.0) + angle)) - (turn);
+		double backRight = (speed * Math.cos((Math.PI / 4.0) - angle)) + (turn);
+
+		//safe drive
+		//if (Math.abs(frontLeft) < 0.05) frontLeft = 0.0;
+		//if (Math.abs(frontRight) < 0.05) frontRight = 0.0;
+		//if (Math.abs(backLeft) < 0.05) backLeft = 0.0;
+		//if (Math.abs(backRight) < 0.05) backRight = 0.0;
+
+		setMotorPowers(frontLeft, backLeft, backRight, frontRight);
+	}
+
+	public void setDriveABS() {
+		setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 		mode = Mode.DRIVE_ABS;
 	}
 
+	public void setDriveABS(DoubleSupplier xSupplier, DoubleSupplier ySupplier, DoubleSupplier turn) {
+		xPower = xSupplier;
+		yPower = ySupplier;
+		headingPower = turn;
+
+		mode = Mode.DRIVE_ABS;
+	}
+/*
 	private void setMotorsABS() {
 		double frontLeft = (-speed * Math.cos((Math.PI / 4.0) - angle)) + (turn);
 		double frontRight = (speed * Math.cos((Math.PI / 4.0) + angle)) + (turn);
@@ -269,6 +284,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 
 		setMotorPowers(frontLeft, backLeft, backRight, frontRight);
 	}
+
+ */
 
 	public void idle() {
 		mode = Mode.IDLE;
@@ -415,6 +432,8 @@ public class DriveTrainMecanum extends MecanumDrive {
 		dashboard.sendTelemetryPacket(packet);
 	}
 
+
+
 	public boolean isBusy() {
 		return mode != Mode.IDLE;
 	}
@@ -491,4 +510,6 @@ public class DriveTrainMecanum extends MecanumDrive {
 	public double getRawExternalHeading() {
 		return imu.getAngularOrientation().firstAngle;
 	}
+
+	public double getRawHeadingVelocity() { return imu.getAngularVelocity().zRotationRate; }
 }

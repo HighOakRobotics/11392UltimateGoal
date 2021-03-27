@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.subsystem.roadrunner.Encoder;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,8 +23,9 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 	private Encoder rightEncoder;
 
 	private Supplier<Double> headingSupplier;
+	private Supplier<Double> headingVelocitySupplier;
 
-	public TwoWheelLocalizer(HardwareMap hardwareMap, Supplier<Double> headingSupplier) {
+	public TwoWheelLocalizer(HardwareMap hardwareMap, Supplier<Double> headingSupplier, Supplier<Double> headingVelocitySupplier) {
 		super(Arrays.asList(
 				new Pose2d(-2.473, 0.087, -1*Math.PI / 2), //horizontal (center)
 				new Pose2d(-2.915, -2.773, 0) //vertical (right)
@@ -35,6 +37,7 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 		// Encoder.setDirection(Encoder.Direction.REVERSE)
 
 		this.headingSupplier = headingSupplier;
+		this.headingVelocitySupplier = headingVelocitySupplier;
 	}
 
 	@Override
@@ -48,6 +51,19 @@ public class TwoWheelLocalizer extends TwoTrackingWheelLocalizer {
 				encoderTicksToInches(centerEncoder.getCurrentPosition()),
 				encoderTicksToInches(rightEncoder.getCurrentPosition())
 		);
+	}
+
+	@Override
+	public @Nullable List<Double> getWheelVelocities() {
+		return Arrays.asList(
+				encoderTicksToInches(centerEncoder.getCorrectedVelocity()),
+				encoderTicksToInches(rightEncoder.getCorrectedVelocity())
+		);
+	}
+
+	@Override
+	public @Nullable Double getHeadingVelocity() {
+		return headingVelocitySupplier.get();
 	}
 
 	public static double encoderTicksToInches(double ticks) {

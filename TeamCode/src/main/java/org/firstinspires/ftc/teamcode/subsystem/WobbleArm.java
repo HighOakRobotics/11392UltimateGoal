@@ -6,29 +6,29 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Range;
 
-public class Lift extends Subsystem {
+public class WobbleArm extends Subsystem {
 
 	private static final int MIN_POSITION = 0;
 	private static final int MAX_POSITION = 1150;
-	private static final double RUN_POWER = 0.8;
+	private static final double RUN_POWER = 0.0;
 	public int offset = 0;
 	public int targetPosition = 0;
-	private DcMotorEx lift;
-	private double liftPower;
+	private DcMotorEx armMotor;
+	private double wobbleArmPower;
 
-	public double getLiftPower() {
-		return liftPower;
+	public double getWobbleArmPower() {
+		return wobbleArmPower;
 	}
 
-	public void setLiftPower(double liftPower) {
-		this.liftPower = liftPower;
+	public void setWobbleArmPower(double wobbleArmPower) {
+		this.wobbleArmPower = wobbleArmPower;
 	}
 
 	public int getTargetPosition() {
 		return targetPosition;
 	}
 
-	public void setTargetPosition(int targetPosition) {
+	private void setTargetPosition(int targetPosition) {
 		this.targetPosition = targetPosition;
 	}
 
@@ -36,19 +36,19 @@ public class Lift extends Subsystem {
 		targetPosition = Range.clip(targetPosition + tool, MIN_POSITION, MAX_POSITION);
 	}
 
-	private void setMotorTarget(int position) {
+	public void setMotorTarget(int position) {
 		int desiredPosition = offset + position;
-		lift.setTargetPosition(Range.clip(desiredPosition, MIN_POSITION, MAX_POSITION));
+		armMotor.setTargetPosition(Range.clip(desiredPosition, MIN_POSITION, MAX_POSITION));
 	}
 
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
-		lift = hardwareMap.get(DcMotorEx.class, "lift");
-		lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-		offset = lift.getCurrentPosition();
-		lift.setTargetPosition(offset);
-		lift.setPower(0);
-		lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+		armMotor = hardwareMap.get(DcMotorEx.class, "wobble");
+		armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+		offset = armMotor.getCurrentPosition();
+		armMotor.setTargetPosition(offset);
+		armMotor.setPower(0);
+		armMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 	}
 
 	@Override
@@ -57,17 +57,17 @@ public class Lift extends Subsystem {
 
 	@Override
 	public void start() {
-		lift.setPower(RUN_POWER);
+		armMotor.setPower(RUN_POWER);
 	}
 
 	@Override
 	public void runPeriodic() {
 		setMotorTarget(targetPosition);
-		telemetry.addData("lift", lift.getCurrentPosition() - offset);
+		telemetry.addData("wobble", armMotor.getCurrentPosition() - offset);
 	}
 
 	@Override
 	public void stop() {
-		lift.setPower(0);
+		armMotor.setPower(0);
 	}
 }

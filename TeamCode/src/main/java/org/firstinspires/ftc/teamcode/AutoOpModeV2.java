@@ -12,13 +12,14 @@ import com.ftc11392.sequoia.task.Task;
 import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.subsystem.Lift;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystem.RingDetector;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Tilt;
-import org.firstinspires.ftc.teamcode.subsystem.WobbleGripper;
+import org.firstinspires.ftc.teamcode.subsystem.WobbleArm;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.FusionSensor;
+import org.firstinspires.ftc.teamcode.subsystem.positioning.OdometrySensor;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.PositionLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.TwoWheelLocalizer;
 import org.firstinspires.ftc.teamcode.subsystem.positioning.VSLAMSensor;
@@ -28,7 +29,6 @@ import org.firstinspires.ftc.teamcode.task.RingDetectTask;
 import org.firstinspires.ftc.teamcode.task.StartShooterTask;
 import org.firstinspires.ftc.teamcode.task.StopShooterTask;
 import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
-import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,10 +38,17 @@ import java.util.function.Supplier;
 @Autonomous(name = "AutoOpModeV2 11392", group = "11392", preselectTeleOp = "DriveOpMode 11392")
 //@Disabled
 public class AutoOpModeV2 extends SequoiaOpMode {
-	private final Lift lift = new Lift();
+	private final WobbleArm wobbleArm = new WobbleArm();
 	private final Tilt tilt = new Tilt();
-	//private final VSLAMSensor vslam = new VSLAMSensor();
-	private final Mecanum mecanum = new Mecanum();
+	private final Mecanum drivetrain = new Mecanum();
+	VSLAMSensor vslam = new VSLAMSensor();
+	OdometrySensor odo = new OdometrySensor(
+			() -> new TwoWheelLocalizer(hardwareMap,
+					() -> drivetrain.mecanum().getRawExternalHeading(),
+					() -> drivetrain.mecanum().getRawHeadingVelocity()
+			)
+	);
+	FusionSensor fuse = new FusionSensor(vslam, odo);
 	//private final WobbleGripper gripper = new WobbleGripper();
 	private final Shooter shooter = new Shooter();
 	private final Loader loader = new Loader();
@@ -74,18 +81,16 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 
 	@Override
 	public void initTriggers() {
-		/*
-		mecanum.mecanum().setLocalizer(
-				new PositionLocalizer(vslam.getPositionSupplier(), vslam.getPositionReset())
+		drivetrain.mecanum().setLocalizer(
+				new PositionLocalizer(fuse.getPositionSupplier(), fuse.getPositionReset())
 		);
-		*/
-		mecanum.mecanum().setLocalizer(new TwoWheelLocalizer(hardwareMap, () -> mecanum.mecanum().getRawExternalHeading()));
 		Scheduler.getInstance().schedule(new RingDetectTask(ringDetector));
-		mecanum.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
+		drivetrain.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
 	}
 
 	@Override
 	public void runTriggers() {
+		drivetrain.mecanum().setPoseEstimate(new Pose2d(-63, -24, Math.PI));
 		Scheduler.getInstance().schedule(new SequentialTaskBundle(
 				// Load in mappings
 				new InstantTask(() -> rings = ringDetector.getDetectedRings()),
@@ -105,7 +110,7 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 				new ConditionalTask(followConstantTrajectory(() -> new Vector2d(10, -42)),
 						new InstantTask(() -> {}), () -> rings != 0),
 				new InstantTask(() -> {
-					Pose2d pose = mecanum.mecanum().getPoseEstimate();
+					Pose2d pose = drivetrain.mecanum().getPoseEstimate();
 					scheduler.putPersistentData("x", Double.toString(pose.getX()));
 					scheduler.putPersistentData("y", Double.toString(pose.getY()));
 					scheduler.putPersistentData("rot", Double.toString(pose.getHeading()));
@@ -144,16 +149,16 @@ public class AutoOpModeV2 extends SequoiaOpMode {
 
 	private FollowTrajectoryTask followConstantTrajectory(Supplier<Vector2d> vector) {
 		return new FollowTrajectoryTask(
-				mecanum,
-				() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+				drivetrain,
+				() -> drivetrain.mecanum().trajectoryBuilder(drivetrain.mecanum().getPoseEstimate())
 						.lineToConstantHeading(vector.get()).build()
 		);
 	}
 
 	private FollowTrajectoryTask followTrajectory(Supplier<Pose2d> pose) {
 		return new FollowTrajectoryTask(
-				mecanum,
-				() -> mecanum.mecanum().trajectoryBuilder(mecanum.mecanum().getPoseEstimate())
+				drivetrain,
+				() -> drivetrain.mecanum().trajectoryBuilder(drivetrain.mecanum().getPoseEstimate())
 						.lineToLinearHeading(pose.get()).build()
 		);
 	}
