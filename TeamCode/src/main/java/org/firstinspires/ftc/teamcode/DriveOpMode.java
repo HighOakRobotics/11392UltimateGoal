@@ -3,11 +3,14 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.ParallelTaskBundle;
+import com.ftc11392.sequoia.task.SequentialTaskBundle;
+import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Lift;
+import org.firstinspires.ftc.teamcode.subsystem.Lights;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
@@ -28,6 +31,7 @@ public class DriveOpMode extends SequoiaOpMode {
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
 	Loader loader = new Loader();
+	Lights lights = new Lights();
 	Tilt tilt = new Tilt();
 	Lift lift = new Lift();
 	WobbleGripper gripper = new WobbleGripper();
@@ -41,6 +45,12 @@ public class DriveOpMode extends SequoiaOpMode {
 
 	@Override
 	public void runTriggers() {
+		scheduler.schedule(new SequentialTaskBundle(
+				new WaitTask(80, TimeUnit.SECONDS),
+				new InstantTask(() -> {lights.endGame();}),
+				new WaitTask(30,TimeUnit.SECONDS),
+				new InstantTask( () -> {lights.finalTen();})
+		));
 		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		gamepad1H.rightTriggerButton(0.05).whilePressed(new LiftControlTask(50, lift));
 		gamepad1H.leftTriggerButton(0.05).whilePressed(new LiftControlTask(-50, lift));
