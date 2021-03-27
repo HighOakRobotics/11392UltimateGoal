@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.ftc11392.sequoia.SequoiaOpMode;
 import com.ftc11392.sequoia.task.InstantTask;
 import com.ftc11392.sequoia.task.ParallelTaskBundle;
+import com.ftc11392.sequoia.task.SequentialTaskBundle;
 import com.ftc11392.sequoia.task.StartEndTask;
+import com.ftc11392.sequoia.task.WaitTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystem.Blockers;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Lights;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
@@ -33,12 +36,16 @@ import org.firstinspires.ftc.teamcode.task.TiltModeSelectTask;
 import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 import org.firstinspires.ftc.teamcode.task.WobbleModeSelectTask;
 
+import java.util.concurrent.TimeUnit;
+
+
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
 	Blockers blockers = new Blockers();
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
 	Loader loader = new Loader();
+	Lights lights = new Lights();
 	Tilt tilt = new Tilt();
 	WobbleArm wobbleArm = new WobbleArm();
 	WobbleGripper gripper = new WobbleGripper();
@@ -82,6 +89,12 @@ public class DriveOpMode extends SequoiaOpMode {
 	public void runTriggers() {
 		scheduler.schedule(new BlockerManagmentTask(blockers, fuse.getPositionSupplier()));
 		scheduler.schedule(new WobbleModeSelectTask(WobbleModeSelectTask.Position.START, wobbleArm));
+		scheduler.schedule(new SequentialTaskBundle(
+				new WaitTask(80, TimeUnit.SECONDS),
+				new InstantTask(() -> {lights.endGame();}),
+				new WaitTask(30,TimeUnit.SECONDS),
+				new InstantTask( () -> {lights.finalTen();})
+		));
 		drivetrain.mecanum().setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 		gamepad1H.rightTriggerButton(0.05).onPress(new WobbleModeSelectTask(WobbleModeSelectTask.Position.GRAB, wobbleArm));
 		gamepad1H.leftTriggerButton(0.05).onPress(new WobbleModeSelectTask(WobbleModeSelectTask.Position.HOLD, wobbleArm));
