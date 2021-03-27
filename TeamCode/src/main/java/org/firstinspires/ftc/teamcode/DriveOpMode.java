@@ -7,6 +7,7 @@ import com.ftc11392.sequoia.task.StartEndTask;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
+import org.firstinspires.ftc.teamcode.subsystem.Blockers;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Loader;
 import org.firstinspires.ftc.teamcode.subsystem.Mecanum;
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.task.WobbleGripperControlTask;
 
 @TeleOp(name = "DriveOpMode 11392", group = "11392")
 public class DriveOpMode extends SequoiaOpMode {
+	Blockers blockers = new Blockers();
 	Shooter shooter = new Shooter();
 	Intake intake = new Intake();
 	Loader loader = new Loader();
@@ -103,13 +105,17 @@ public class DriveOpMode extends SequoiaOpMode {
 				));
 		gamepad1H.sticksButton(0.05)
 				.onPressWithCancel(new GamepadDriveTask(drivetrain, gamepad1));
-		gamepad2H.sticksButton(0.05)
-				.onPressWithCancel(
+		gamepad2H.yToggleButton()
+				.risingWithCancel(
 						new ParallelTaskBundle(
-								new PointControlTask(drivetrain, (double d) -> {pointingOutput = d;}),
+								new PointControlTask(drivetrain, (double d) -> {
+									//
+									// System.out.println(d);
+									pointingOutput = d;
+								}),
 								new StartEndTask(() -> {drivetrain.mecanum().setDriveABS(
-										() -> gamepad2.left_stick_x,
-										() -> gamepad2.left_stick_y,
+										() -> -0.7*gamepad2.left_stick_x,
+										() -> 0.7*gamepad2.left_stick_y,
 										() -> pointingOutput
 								);},
 										() -> {drivetrain.mecanum().idle();})

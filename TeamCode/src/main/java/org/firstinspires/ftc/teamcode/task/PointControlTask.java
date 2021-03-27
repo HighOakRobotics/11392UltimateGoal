@@ -13,12 +13,19 @@ public class PointControlTask extends PIDFTask {
 	double turn = 0;
 
 	public PointControlTask(Mecanum drivetrain, DoubleConsumer output) {
-		super(new PIDFController(1, 0, 0),
-				() -> drivetrain.mecanum().getPoseEstimate().getHeading(),
+		super(new PIDFController(0.5, 0, 0),
+				() -> {
+					double rarrad =  drivetrain.mecanum().getPoseEstimate().getHeading() + Math.PI;
+					if (rarrad < Math.PI) rarrad += Math.PI * 2;
+					return rarrad;
+				},
 				() -> {
 					Pose2d pos = drivetrain.mecanum().getPoseEstimate();
-					return Math.PI - Math.atan2(pos.getY() - 72, pos.getX() + 36);
+					double rad = Math.atan2(72-pos.getX(), 36+pos.getY());
+					double trurad = rad + 3*Math.PI/2;
+					return trurad;
 				},
 				output);
 	}
 }
+

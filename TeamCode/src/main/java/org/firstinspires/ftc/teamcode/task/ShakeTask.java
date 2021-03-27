@@ -16,6 +16,7 @@ public class ShakeTask extends Task {
 
 	public ShakeTask(Tilt tilt, Intake intake) {
 		this.tilt = tilt;
+		this.intake = intake;
 	}
 
 	@Override
