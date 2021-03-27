@@ -22,7 +22,7 @@ public class ShakeTask extends Task {
 	@Override
 	public void init() {
 		tilt.setTargetPosition(TiltModeSelectTask.Position.SHAKE.pos());
-		intake.setIntakePower(1.0);
+		//intake.setIntakePower(1.0);
 		clock = new Clock();
 		clock.startTiming();
 		this.running = true;
@@ -36,7 +36,7 @@ public class ShakeTask extends Task {
 
 	@Override
 	public void stop(boolean interrupted) {
-		intake.setIntakePower(0);
+		//intake.setIntakePower(0);
 		tilt.setTargetPosition(TiltModeSelectTask.Position.SHOOT.pos());
 	}
 }

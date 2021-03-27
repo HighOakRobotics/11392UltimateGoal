@@ -28,7 +28,6 @@ import org.firstinspires.ftc.teamcode.task.BlockerManagmentTask;
 import org.firstinspires.ftc.teamcode.task.GamepadDriveTask;
 import org.firstinspires.ftc.teamcode.task.LoaderPushTask;
 import org.firstinspires.ftc.teamcode.task.PointControlTask;
-import org.firstinspires.ftc.teamcode.task.ResetTiltTask;
 import org.firstinspires.ftc.teamcode.task.ShakeTask;
 import org.firstinspires.ftc.teamcode.task.StartShooterTask;
 import org.firstinspires.ftc.teamcode.task.StopShooterTask;
@@ -143,6 +142,10 @@ public class DriveOpMode extends SequoiaOpMode {
 		gamepad1H.rightButton()
 				.onRelease(new WobbleGripperControlTask(WobbleGripperControlTask.WobbleGripperState.OPEN, gripper));
 		gamepad1H.leftBumperButton()
-				.onPress(new ResetTiltTask(tilt));
+				.onPress(new ParallelTaskBundle(
+						new InstantTask(() -> {intake.setIntakePower(0);}),
+						new StartShooterTask(shooter),
+						new TiltModeSelectTask(TiltModeSelectTask.Position.POWERSHOT, tilt)
+				));
 	}
 }

@@ -14,8 +14,8 @@ public class Loader extends Subsystem {
 	@Override
 	public void initialize(HardwareMap hardwareMap) {
 		loader = hardwareMap.get(Servo.class, "loader");
-		loader.setPosition(LOADER_CLOSE);
-		loaderState = false;
+		loader.setPosition(LOADER_OPEN);
+		loaderState = true ;
 	}
 
 	public void update() {

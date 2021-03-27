@@ -38,7 +38,7 @@ public class WobbleArm extends Subsystem {
 
 	public void setMotorTarget(int position) {
 		int desiredPosition = offset + position;
-		armMotor.setTargetPosition(Range.clip(desiredPosition, MIN_POSITION, MAX_POSITION));
+		targetPosition = (Range.clip(desiredPosition, MIN_POSITION, MAX_POSITION));
 	}
 
 	@Override
@@ -62,8 +62,9 @@ public class WobbleArm extends Subsystem {
 
 	@Override
 	public void runPeriodic() {
-		setMotorTarget(targetPosition);
+		armMotor.setTargetPosition(targetPosition);
 		telemetry.addData("wobble", armMotor.getCurrentPosition() - offset);
+		telemetry.addData("wobbleTarget", targetPosition);
 	}
 
 	@Override

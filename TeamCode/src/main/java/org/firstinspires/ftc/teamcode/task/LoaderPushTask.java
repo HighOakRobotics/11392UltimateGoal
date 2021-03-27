@@ -17,7 +17,7 @@ public class LoaderPushTask extends Task {
 
 	@Override
 	public void init() {
-		loader.setLoaderState(Loader.LoaderState.OPEN);
+		loader.setLoaderState(Loader.LoaderState.CLOSED);
 		clock.startTiming();
 		this.running = true;
 	}
@@ -31,6 +31,7 @@ public class LoaderPushTask extends Task {
 
 	@Override
 	public void stop(boolean interrupted) {
-		loader.setLoaderState(Loader.LoaderState.CLOSED);
+
+		loader.setLoaderState(Loader.LoaderState.OPEN);
 	}
 }

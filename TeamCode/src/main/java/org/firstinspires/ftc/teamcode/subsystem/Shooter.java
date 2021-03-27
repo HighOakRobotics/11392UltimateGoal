@@ -55,7 +55,7 @@ public class Shooter extends Subsystem {
 		flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
 
 		flywheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-		flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(60, 3, 30, 0));
+		//flywheel.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(60, 3, 30, 0));
 		PIDFCoefficients pidf = flywheel.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 		telemetry.log().add("Shooter PID: P:" + pidf.p + " I:" + pidf.i + " D:" + pidf.d + " F:" + pidf.f);
 		flywheel.setDirection(DcMotorSimple.Direction.REVERSE);
